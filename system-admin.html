@@ -1,0 +1,1541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Response - System Administration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ===== CSS Reset & Base Styles ===== */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        :root {
+            --primary: #e02b2b;
+            --secondary: #4dabf7;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --danger: #f44336;
+            --dark: #1b1b1c;
+            --darker: #272727;
+            --light: #f5f5f5;
+            --super-admin: #ff9800;
+            --admin: #e02b2b;
+            --director: #17a2b8;
+        }
+
+        html, body { 
+            height: 100%; 
+        }
+
+        body {
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: var(--dark);
+            color: #eee;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== Header Styles ===== */
+        .header {
+            height: 70px;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            box-shadow: 0 2px 0 rgba(0,0,0,0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            color: #fff;
+            font-family: "Baloo 2", "Inter", sans-serif;
+        }
+
+        .admin-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: white;
+        }
+
+        .admin-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .role-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .role-super-admin { background: var(--super-admin); color: black; }
+        .role-admin { background: var(--admin); }
+        .role-director { background: var(--director); }
+
+        /* ===== Navigation ===== */
+        .admin-nav {
+            background: var(--darker);
+            padding: 0 28px;
+            border-bottom: 1px solid #383838;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+        }
+
+        .nav-tab {
+            padding: 15px 25px;
+            background: transparent;
+            border: none;
+            color: #ccc;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s ease;
+            font-weight: 600;
+        }
+
+        .nav-tab.active {
+            color: var(--secondary);
+            border-bottom-color: var(--secondary);
+            background: rgba(77, 171, 247, 0.1);
+        }
+
+        .nav-tab:hover {
+            background: rgba(255,255,255,0.05);
+        }
+
+        /* ===== Main Content ===== */
+        .admin-portal {
+            padding: 20px;
+            min-height: calc(100vh - 120px);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* ===== Dashboard Styles ===== */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .welcome-card {
+            background: linear-gradient(135deg, #2f2f2f, #242424);
+            padding: 30px;
+            border-radius: 12px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 20px;
+        }
+
+        .welcome-card h2 {
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--darker);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .stat-card h3 {
+            font-size: 24px;
+            margin-bottom: 5px;
+            color: #f6f6f6;
+        }
+
+        .stat-card p {
+            color: #cfcfcf;
+            font-size: 14px;
+        }
+
+        /* ===== Forms ===== */
+        .form-container {
+            background: var(--darker);
+            border-radius: 12px;
+            padding: 25px;
+            border: 1px solid rgba(255,255,255,0.05);
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: #ccc;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #2a2a2a;
+            color: #eee;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        /* ===== User Management ===== */
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .user-card {
+            background: var(--darker);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .user-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .user-title {
+            font-weight: 600;
+            color: #eaeaea;
+            font-size: 16px;
+        }
+
+        .user-role {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-details {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            font-size: 14px;
+            color: #ccc;
+            margin-bottom: 15px;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            font-size: 12px;
+        }
+
+        .btn-primary {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning);
+            color: black;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        /* ===== System Settings ===== */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .setting-card {
+            background: var(--darker);
+            border-radius: 8px;
+            padding: 20px;
+            border-left: 4px solid var(--warning);
+        }
+
+        .setting-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .setting-title {
+            font-weight: 600;
+            color: #eaeaea;
+            font-size: 16px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #444;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--success);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* ===== Activity Log ===== */
+        .activity-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .activity-item {
+            background: #2a2a2a;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .activity-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .activity-user {
+            font-weight: 600;
+            color: #eaeaea;
+        }
+
+        .activity-time {
+            color: #999;
+            font-size: 12px;
+        }
+
+        .activity-action {
+            color: #ccc;
+            font-size: 14px;
+        }
+
+        /* ===== Modal Styles ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 0;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #444;
+        }
+
+        .modal-header {
+            padding: 20px 25px 0;
+            border-bottom: 1px solid #383838;
+            margin-bottom: 0;
+        }
+
+        .modal-header h3 {
+            margin: 0 0 20px 0;
+            color: var(--secondary);
+            font-size: 18px;
+        }
+
+        .modal-body {
+            padding: 20px 25px;
+        }
+
+        .modal-footer {
+            padding: 15px 25px 20px;
+            border-top: 1px solid #383838;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* ===== Notification Styles ===== */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #272727;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 3000;
+            max-width: 300px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .notification.success { border-left: 4px solid var(--success); }
+        .notification.error { border-left: 4px solid var(--danger); }
+        .notification.info { border-left: 4px solid var(--secondary); }
+        .notification.warning { border-left: 4px solid var(--warning); }
+        .notification-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-grow: 1;
+        }
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* ===== Permission Badges ===== */
+        .permission-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 10px;
+            font-size: 10px;
+            margin-left: 5px;
+        }
+
+        .super-admin-badge {
+            background: var(--warning);
+            color: black;
+        }
+
+        /* ===== Role-Specific UI Elements ===== */
+        .super-admin-only { display: none; }
+        .admin-only { display: none; }
+        .director-only { display: none; }
+
+        .super-admin .super-admin-only { display: block; }
+        .admin .admin-only { display: block; }
+        .director .director-only { display: block; }
+
+        /* ===== Responsive Design ===== */
+        @media (max-width: 1200px) {
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                padding: 0 15px;
+            }
+            
+            .header h1 {
+                font-size: 20px;
+            }
+            
+            .admin-nav {
+                padding: 0 15px;
+            }
+            
+            .admin-portal {
+                padding: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .nav-tab {
+                flex: 1;
+                min-width: 120px;
+                text-align: center;
+                padding: 12px 15px;
+            }
+            
+            .user-actions {
+                flex-wrap: wrap;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .header {
+                flex-direction: column;
+                height: auto;
+                padding: 10px 15px;
+            }
+            
+            .admin-info {
+                margin-top: 10px;
+            }
+            
+            .nav-tab {
+                min-width: 100px;
+                font-size: 14px;
+                padding: 10px 12px;
+            }
+            
+            .welcome-card {
+                padding: 20px;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <h1>Emergency Response - System Administration</h1>
+        <div class="admin-info">
+            <div class="admin-avatar" id="adminAvatar">SA</div>
+            <div>
+                <div style="font-weight: 600;" id="adminName">System Administrator</div>
+                <div style="font-size: 12px; opacity: 0.8;" id="adminRole">Super Admin</div>
+            </div>
+            <div class="role-badge" id="roleBadge">Super Admin</div>
+        </div>
+    </header>
+
+    <!-- NAVIGATION -->
+    <nav class="admin-nav">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="switchTab('dashboard')"><i class="fas fa-chart-line"></i> Dashboard</button>
+            <button class="nav-tab" onclick="switchTab('users')"><i class="fas fa-users"></i> User Management</button>
+            <button class="nav-tab super-admin-only admin-only" onclick="switchTab('settings')"><i class="fas fa-cog"></i> System Settings</button>
+            <button class="nav-tab super-admin-only admin-only" onclick="switchTab('logs')"><i class="fas fa-clipboard-list"></i> Activity Logs</button>
+            <button class="nav-tab" onclick="systemLogout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <div class="admin-portal">
+        <!-- DASHBOARD TAB -->
+        <div id="dashboard" class="tab-content active">
+            <div class="welcome-card">
+                <h2 id="welcomeMessage">System Administration Dashboard 👨‍💼</h2>
+                <p id="adminDescription">Monitor system health, manage users, and configure application settings.</p>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <h3 id="totalUsers">0</h3>
+                    <p>Total Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="activeAdmins">0</h3>
+                    <p>Admin Users</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="activeVolunteers">0</h3>
+                    <p>Volunteers</p>
+                </div>
+                <div class="stat-card">
+                    <h3 id="systemStatus">Online</h3>
+                    <p>System Status</p>
+                </div>
+            </div>
+
+            <div class="dashboard-grid">
+                <div>
+                    <div class="form-container">
+                        <h3 style="color: var(--secondary); margin-bottom: 20px;">🚀 Quick Actions</h3>
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                            <button class="btn btn-primary" onclick="switchTab('users')">Manage Users</button>
+                            <button class="btn btn-success" onclick="showCreateUserModal()" id="createUserBtn">Create New User</button>
+                            <button class="btn btn-warning super-admin-only admin-only" onclick="switchTab('settings')">System Settings</button>
+                            <button class="btn btn-primary super-admin-only admin-only" onclick="generateSystemReport()">Generate Report</button>
+                        </div>
+                    </div>
+
+                    <div class="form-container super-admin-only admin-only">
+                        <h3 style="color: var(--secondary); margin-bottom: 15px;">📈 System Health</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                            <div style="background: #2a2a2a; padding: 15px; border-radius: 6px;">
+                                <div style="font-weight: 600; color: #eaeaea;">Server Load</div>
+                                <div style="color: var(--success); font-size: 24px; margin-top: 5px;">42%</div>
+                            </div>
+                            <div style="background: #2a2a2a; padding: 15px; border-radius: 6px;">
+                                <div style="font-weight: 600; color: #eaeaea;">Database</div>
+                                <div style="color: var(--success); font-size: 24px; margin-top: 5px;">Healthy</div>
+                            </div>
+                            <div style="background: #2a2a2a; padding: 15px; border-radius: 6px;">
+                                <div style="font-weight: 600; color: #eaeaea;">API Status</div>
+                                <div style="color: var(--success); font-size: 24px; margin-top: 5px;">Online</div>
+                            </div>
+                            <div style="background: #2a2a2a; padding: 15px; border-radius: 6px;">
+                                <div style="font-weight: 600; color: #eaeaea;">Uptime</div>
+                                <div style="color: var(--success); font-size: 24px; margin-top: 5px;">99.8%</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="form-container">
+                        <h3 style="color: var(--secondary); margin-bottom: 15px;">🔔 Recent Activity</h3>
+                        <div class="activity-list">
+                            <div class="activity-item">
+                                <div class="activity-header">
+                                    <div class="activity-user">System Admin</div>
+                                    <div class="activity-time">2 minutes ago</div>
+                                </div>
+                                <div class="activity-action">Created new volunteer account</div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-header">
+                                    <div class="activity-user">Operations Director</div>
+                                    <div class="activity-time">15 minutes ago</div>
+                                </div>
+                                <div class="activity-action">Updated system settings</div>
+                            </div>
+                            <div class="activity-item">
+                                <div class="activity-header">
+                                    <div class="activity-user">Abdul Rahman</div>
+                                    <div class="activity-time">1 hour ago</div>
+                                </div>
+                                <div class="activity-action">Completed rescue task in Zone 2B</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-container super-admin-only admin-only">
+                        <h3 style="color: var(--secondary); margin-bottom: 15px;">📊 System Alerts</h3>
+                        <div style="background: rgba(255, 152, 0, 0.1); border: 1px solid var(--warning); border-radius: 6px; padding: 15px;">
+                            <div style="color: var(--warning); font-weight: 600; margin-bottom: 5px;">⚠️ Maintenance Notice</div>
+                            <div style="font-size: 14px;">Scheduled system maintenance on Sunday, 2:00 AM - 4:00 AM</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- USER MANAGEMENT TAB -->
+        <div id="users" class="tab-content">
+            <div class="form-container">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h3 style="color: var(--secondary);">👥 User Management</h3>
+                    <button class="btn btn-success" onclick="showCreateUserModal()" id="createUserBtn2"><i class="fas fa-plus"></i> Create User</button>
+                </div>
+                
+                <div class="users-grid" id="usersGrid">
+                    <!-- Users will be loaded here dynamically -->
+                </div>
+            </div>
+        </div>
+
+        <!-- SYSTEM SETTINGS TAB -->
+        <div id="settings" class="tab-content">
+            <div class="form-container">
+                <h3 style="color: var(--secondary); margin-bottom: 20px;">⚙️ System Configuration</h3>
+                
+                <div class="settings-grid">
+                    <div class="setting-card">
+                        <div class="setting-header">
+                            <div class="setting-title">User Registration</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="userRegistrationToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p style="color: #ccc; font-size: 14px;">Allow new volunteer registrations (admin approval required)</p>
+                    </div>
+
+                    <div class="setting-card">
+                        <div class="setting-header">
+                            <div class="setting-title">Email Notifications</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="emailNotificationsToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p style="color: #ccc; font-size: 14px;">Send email alerts for emergency situations</p>
+                    </div>
+
+                    <div class="setting-card">
+                        <div class="setting-header">
+                            <div class="setting-title">Auto Backup</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="autoBackupToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p style="color: #ccc; font-size: 14px;">Automatically backup system data daily</p>
+                    </div>
+
+                    <div class="setting-card">
+                        <div class="setting-header">
+                            <div class="setting-title">Location Tracking</div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="locationTrackingToggle" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <p style="color: #ccc; font-size: 14px;">Track volunteer locations for safety</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px;">
+                    <h4 style="color: var(--secondary); margin-bottom: 15px;">System Preferences</h4>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Session Timeout (minutes)</label>
+                            <input type="number" id="sessionTimeout" value="30" min="5" max="120">
+                        </div>
+                        <div class="form-group">
+                            <label>Maximum Login Attempts</label>
+                            <input type="number" id="maxLoginAttempts" value="5" min="1" max="10">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>System Maintenance Message</label>
+                        <textarea id="maintenanceMessage" rows="3" placeholder="Enter maintenance notice for users"></textarea>
+                    </div>
+                    <button class="btn btn-success" onclick="saveSystemSettings()">Save Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ACTIVITY LOGS TAB -->
+        <div id="logs" class="tab-content">
+            <div class="form-container">
+                <h3 style="color: var(--secondary); margin-bottom: 20px;">📋 System Activity Logs</h3>
+                
+                <div style="display: flex; gap: 15px; margin-bottom: 20px;">
+                    <button class="btn btn-primary" onclick="filterLogs('all')">All Activities</button>
+                    <button class="btn btn-warning" onclick="filterLogs('user')">User Management</button>
+                    <button class="btn btn-success" onclick="filterLogs('system')">System Changes</button>
+                    <button class="btn btn-danger super-admin-only" onclick="clearLogs()" id="clearLogsBtn">Clear Logs</button>
+                </div>
+
+                <div class="activity-list" id="systemLogs">
+                    <!-- System logs will be loaded here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- CREATE USER MODAL -->
+    <div id="createUserModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>👤 Create New User</h3>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>User Type</label>
+                    <select id="newUserType">
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+                
+                <div class="form-group" id="adminRoleField" style="display: none;">
+                    <label>Admin Role</label>
+                    <select id="newUserRole">
+                        <!-- Options populated dynamically -->
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label>Full Name</label>
+                    <input type="text" id="newUserName" placeholder="Enter full name">
+                </div>
+                <div class="form-group">
+                    <label>Username</label>
+                    <input type="text" id="newUserUsername" placeholder="Enter username">
+                </div>
+                <div class="form-group">
+                    <label>Password</label>
+                    <input type="password" id="newUserPassword" placeholder="Enter password">
+                </div>
+                <div class="form-group">
+                    <label>Email</label>
+                    <input type="email" id="newUserEmail" placeholder="Enter email address">
+                </div>
+                <div class="form-group" id="volunteerTeamField" style="display: none;">
+                    <label>Team Assignment</label>
+                    <input type="text" id="newUserTeam" placeholder="Enter team name">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('createUserModal')">Cancel</button>
+                <button class="btn btn-success" onclick="createNewUser()">Create User</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- NOTIFICATION -->
+    <div class="notification" id="notification" style="display: none;">
+        <i class="fas fa-info-circle"></i>
+        <div class="notification-content">
+            <span class="notification-message" id="notificationMessage">Operation completed successfully</span>
+            <button class="notification-close" onclick="hideNotification()">×</button>
+        </div>
+    </div>
+    <script>
+    // ===== ENHANCED USER DATABASE WITH ROLE HIERARCHY =====
+    const userDatabase = {
+        admins: [
+            { 
+                id: 'ADM-001', 
+                username: 'superadmin', 
+                password: 'super123', 
+                name: 'Super Administrator', 
+                email: 'superadmin@emergency.org', 
+                role: 'super_admin',
+                permissions: ['all'],
+                createdBy: 'system',
+                status: 'active'
+            },
+            { 
+                id: 'ADM-002', 
+                username: 'admin', 
+                password: 'admin123', 
+                name: 'System Administrator', 
+                email: 'admin@emergency.org', 
+                role: 'admin',
+                permissions: ['user_management', 'content_management', 'reports'],
+                createdBy: 'ADM-001',
+                status: 'active'
+            },
+            { 
+                id: 'ADM-003', 
+                username: 'director', 
+                password: 'director123', 
+                name: 'Operations Director', 
+                email: 'director@emergency.org', 
+                role: 'director',
+                permissions: ['user_management', 'reports'],
+                createdBy: 'ADM-002',
+                status: 'active'
+            }
+        ],
+        
+        volunteers: [
+            { 
+                id: 'VOL-001', 
+                username: 'abdul', 
+                password: 'vol123', 
+                name: 'Abdul Rahman', 
+                team: 'Rescue Team Alpha', 
+                status: 'active', 
+                createdBy: 'ADM-001' 
+            },
+            { 
+                id: 'VOL-002', 
+                username: 'fatima', 
+                password: 'vol123', 
+                name: 'Fatima Begum', 
+                team: 'Medical Team Bravo', 
+                status: 'active', 
+                createdBy: 'ADM-002' 
+            },
+            { 
+                id: 'VOL-003', 
+                username: 'rahim', 
+                password: 'vol123', 
+                name: 'Rahim Ahmed', 
+                team: 'Logistics Team', 
+                status: 'active', 
+                createdBy: 'ADM-003' 
+            }
+        ]
+    };
+
+    // ===== ENHANCED PERMISSION SYSTEM =====
+    const permissionSystem = {
+        super_admin: {
+            name: 'Super Administrator',
+            permissions: ['all'],
+            can_create: ['super_admin', 'admin', 'director', 'volunteer'],
+            can_manage: ['super_admin', 'admin', 'director', 'volunteer'],
+            can_delete: ['admin', 'director', 'volunteer'],
+            restrictions: ['cannot_delete_self']
+        },
+        admin: {
+            name: 'Administrator',
+            permissions: ['user_management', 'content_management', 'reports'],
+            can_create: ['director', 'volunteer'],
+            can_manage: ['director', 'volunteer'],
+            can_delete: ['director', 'volunteer'],
+            restrictions: ['cannot_manage_super_admins', 'cannot_delete_super_admins', 'cannot_delete_self']
+        },
+        director: {
+            name: 'Operations Director',
+            permissions: ['user_management', 'reports'],
+            can_create: ['volunteer'],
+            can_manage: ['volunteer'],
+            can_delete: ['volunteer'],
+            restrictions: ['cannot_manage_admins', 'cannot_manage_super_admins', 'read_only_system_settings', 'cannot_delete_self']
+        }
+    };
+
+    // ===== SYSTEM ADMINISTRATION =====
+    let currentAdmin = {};
+    let systemUsers = [];
+    let activityLogs = [];
+
+    // ===== PERMISSION CHECK FUNCTIONS =====
+    function hasPermission(permission) {
+        if (!currentAdmin.permissions) return false;
+        return currentAdmin.permissions.includes('all') || currentAdmin.permissions.includes(permission);
+    }
+
+    function canCreateUserType(userType) {
+        const currentRole = currentAdmin.role || 'admin';
+        return permissionSystem[currentRole].can_create.includes(userType);
+    }
+
+    function canManageUser(user) {
+        const currentRole = currentAdmin.role || 'admin';
+        const userRole = user.role || 'volunteer';
+        return permissionSystem[currentRole].can_manage.includes(userRole);
+    }
+
+    function canDeleteUser(user) {
+        // Cannot delete yourself
+        if (user.id === currentAdmin.id) return false;
+        
+        const currentRole = currentAdmin.role || 'admin';
+        const userRole = user.role || 'volunteer';
+        return permissionSystem[currentRole].can_delete.includes(userRole);
+    }
+
+    function isSuperAdmin() {
+        return currentAdmin.role === 'super_admin';
+    }
+
+    function isAdmin() {
+        return currentAdmin.role === 'admin';
+    }
+
+    function isDirector() {
+        return currentAdmin.role === 'director';
+    }
+
+    function checkAdminPrivileges() {
+        const user = getCurrentUser();
+        if (!user || (user.role !== 'super_admin' && user.role !== 'admin' && user.role !== 'director')) {
+            showNotification('Access denied. Administrator privileges required.', 'error');
+            setTimeout(() => {
+                window.location.href = 'login.html';
+            }, 2000);
+            return false;
+        }
+        return true;
+    }
+
+    // ===== INITIALIZATION =====
+    document.addEventListener('DOMContentLoaded', function() {
+        // Check authentication
+        if (!checkAdminPrivileges()) {
+            return;
+        }
+
+        currentAdmin = getCurrentUser();
+        initializeSystemAdmin();
+    });
+
+    function initializeSystemAdmin() {
+        // Set body class based on role for CSS targeting
+        if (isSuperAdmin()) {
+            document.body.classList.add('super-admin');
+        } else if (isAdmin()) {
+            document.body.classList.add('admin');
+        } else if (isDirector()) {
+            document.body.classList.add('director');
+        }
+
+        // Update UI with admin info
+        updateAdminInfo();
+        
+        // Load system data
+        loadSystemData();
+        loadUsers();
+        loadActivityLogs();
+        
+        console.log(`System Administration Portal Initialized - ${currentAdmin.role} Mode`);
+    }
+
+    function updateAdminInfo() {
+        document.getElementById('adminName').textContent = currentAdmin.name;
+        document.getElementById('adminAvatar').textContent = getInitials(currentAdmin.name);
+        
+        // Set role-specific UI elements
+        const roleBadge = document.getElementById('roleBadge');
+        const adminRole = document.getElementById('adminRole');
+        const welcomeMessage = document.getElementById('welcomeMessage');
+        const adminDescription = document.getElementById('adminDescription');
+        
+        if (isSuperAdmin()) {
+            roleBadge.textContent = 'Super Admin';
+            roleBadge.className = 'role-badge role-super-admin';
+            adminRole.textContent = 'Super Administrator';
+            welcomeMessage.textContent = 'Super Administrator Dashboard ⚡';
+            adminDescription.textContent = 'Full system control with unrestricted access to all features and user management.';
+        } else if (isAdmin()) {
+            roleBadge.textContent = 'Admin';
+            roleBadge.className = 'role-badge role-admin';
+            adminRole.textContent = 'Administrator';
+            welcomeMessage.textContent = 'Administrator Dashboard 👨‍💼';
+            adminDescription.textContent = 'Manage users, content, and generate reports. Limited access to system settings.';
+        } else if (isDirector()) {
+            roleBadge.textContent = 'Director';
+            roleBadge.className = 'role-badge role-director';
+            adminRole.textContent = 'Operations Director';
+            welcomeMessage.textContent = 'Operations Director Dashboard 📊';
+            adminDescription.textContent = 'Manage volunteers and view operational reports.';
+        }
+    }
+
+    function getInitials(name) {
+        return name.split(' ').map(n => n[0]).join('').toUpperCase();
+    }
+
+    // ===== TAB MANAGEMENT =====
+    function switchTab(tabName) {
+        // Hide all tabs
+        document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Remove active class from all tabs
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        
+        // Show selected tab
+        document.getElementById(tabName).classList.add('active');
+        
+        // Activate selected tab button
+        event.target.classList.add('active');
+    }
+
+    // ===== ENHANCED USER MANAGEMENT =====
+    function loadUsers() {
+        // Combine all users
+        systemUsers = [
+            ...userDatabase.admins.map(admin => ({ ...admin, type: 'admin' })),
+            ...userDatabase.volunteers.map(volunteer => ({ ...volunteer, type: 'volunteer' }))
+        ];
+
+        renderUsers();
+        updateUserStats();
+    }
+
+    function renderUsers() {
+        const usersGrid = document.getElementById('usersGrid');
+        usersGrid.innerHTML = '';
+
+        // Filter users based on management permissions
+        const visibleUsers = systemUsers.filter(user => canManageUser(user));
+
+        visibleUsers.forEach(user => {
+            // Determine role badge color
+            let roleBadgeColor = 'var(--secondary)';
+            if (user.role === 'super_admin') roleBadgeColor = 'var(--warning)';
+            if (user.role === 'admin') roleBadgeColor = 'var(--primary)';
+            if (user.role === 'director') roleBadgeColor = '#17a2b8';
+            
+            const userCard = document.createElement('div');
+            userCard.className = 'user-card';
+            userCard.innerHTML = `
+                <div class="user-header">
+                    <div class="user-title">${user.name}</div>
+                    <span class="user-role" style="background: ${roleBadgeColor}">
+                        ${user.role ? user.role.replace('_', ' ').toUpperCase() : 'VOLUNTEER'}
+                    </span>
+                </div>
+                <div class="user-details">
+                    <div><strong>Username:</strong> ${user.username}</div>
+                    <div><strong>Email:</strong> ${user.email}</div>
+                    ${user.team ? `<div><strong>Team:</strong> ${user.team}</div>` : ''}
+                    <div><strong>Status:</strong> <span style="color: ${user.status === 'active' ? 'var(--success)' : 'var(--danger)'}">${user.status}</span></div>
+                    <div><strong>Created by:</strong> ${getCreatorName(user.createdBy)}</div>
+                </div>
+                <div class="user-actions">
+                    ${canEditUser(user) ? `<button class="btn btn-primary" onclick="editUser('${user.id}')">Edit</button>` : ''}
+                    ${canResetPassword(user) ? `<button class="btn btn-warning" onclick="resetPassword('${user.id}')">Reset Password</button>` : ''}
+                    ${canToggleStatus(user) ? `
+                        <button class="btn btn-${user.status === 'active' ? 'danger' : 'success'}" onclick="toggleUserStatus('${user.id}')">
+                            ${user.status === 'active' ? 'Deactivate' : 'Activate'}
+                        </button>
+                    ` : ''}
+                    ${canDeleteUser(user) ? `<button class="btn btn-danger" onclick="deleteUser('${user.id}')">Delete</button>` : ''}
+                </div>
+            `;
+            usersGrid.appendChild(userCard);
+        });
+    }
+
+    // ===== PERMISSION-BASED ACTION FUNCTIONS =====
+    function canEditUser(user) {
+        // Cannot edit yourself (for safety)
+        if (user.id === currentAdmin.id) return false;
+        
+        return canManageUser(user) && hasPermission('user_management');
+    }
+
+    function canResetPassword(user) {
+        return canManageUser(user) && hasPermission('user_management');
+    }
+
+    function canToggleStatus(user) {
+        // Cannot deactivate yourself
+        if (user.id === currentAdmin.id) return false;
+        
+        return canManageUser(user) && hasPermission('user_management');
+    }
+
+    function getCreatorName(creatorId) {
+        const allUsers = [...userDatabase.admins, ...userDatabase.volunteers];
+        const creator = allUsers.find(u => u.id === creatorId);
+        return creator ? creator.name : 'System';
+    }
+
+    function updateUserStats() {
+        const totalUsers = systemUsers.length;
+        const activeAdmins = systemUsers.filter(u => u.type === 'admin' && u.status === 'active').length;
+        const activeVolunteers = systemUsers.filter(u => u.type === 'volunteer' && u.status === 'active').length;
+
+        document.getElementById('totalUsers').textContent = totalUsers;
+        document.getElementById('activeAdmins').textContent = activeAdmins;
+        document.getElementById('activeVolunteers').textContent = activeVolunteers;
+    }
+
+    function showCreateUserModal() {
+        if (!hasPermission('user_management')) {
+            showNotification('You do not have permission to create users', 'error');
+            return;
+        }
+        
+        document.getElementById('createUserModal').style.display = 'flex';
+        updateCreateUserForm();
+    }
+
+    function updateCreateUserForm() {
+        const userTypeSelect = document.getElementById('newUserType');
+        const roleSelect = document.getElementById('newUserRole');
+        const teamField = document.getElementById('volunteerTeamField');
+        
+        // Clear existing options
+        userTypeSelect.innerHTML = '';
+        roleSelect.innerHTML = '';
+        
+        // Get current admin's role
+        const currentRole = currentAdmin.role || 'admin';
+        const canCreateTypes = permissionSystem[currentRole].can_create;
+        
+        // Add available user types based on permissions
+        if (canCreateTypes.includes('admin')) {
+            userTypeSelect.innerHTML += '<option value="admin">Administrator</option>';
+        }
+        if (canCreateTypes.includes('volunteer')) {
+            userTypeSelect.innerHTML += '<option value="volunteer">Volunteer</option>';
+        }
+        
+        // Add available roles for admins
+        if (canCreateTypes.includes('super_admin')) {
+            roleSelect.innerHTML += '<option value="super_admin">Super Administrator</option>';
+        }
+        if (canCreateTypes.includes('admin')) {
+            roleSelect.innerHTML += '<option value="admin">Administrator</option>';
+        }
+        if (canCreateTypes.includes('director')) {
+            roleSelect.innerHTML += '<option value="director">Operations Director</option>';
+        }
+        
+        // Show/hide role selection based on user type
+        userTypeSelect.addEventListener('change', function() {
+            if (this.value === 'admin') {
+                document.getElementById('adminRoleField').style.display = 'block';
+                teamField.style.display = 'none';
+            } else {
+                document.getElementById('adminRoleField').style.display = 'none';
+                teamField.style.display = 'block';
+            }
+        });
+        
+        // Trigger change event to set initial state
+        userTypeSelect.dispatchEvent(new Event('change'));
+    }
+
+    function createNewUser() {
+        const userType = document.getElementById('newUserType').value;
+        const role = document.getElementById('newUserRole').value;
+        const name = document.getElementById('newUserName').value;
+        const username = document.getElementById('newUserUsername').value;
+        const password = document.getElementById('newUserPassword').value;
+        const email = document.getElementById('newUserEmail').value;
+        const team = document.getElementById('newUserTeam').value;
+
+        if (!name || !username || !password || !email) {
+            showNotification('Please fill all required fields', 'error');
+            return;
+        }
+
+        // Check permissions for creating this user type
+        if (!canCreateUserType(userType === 'admin' ? role : 'volunteer')) {
+            showNotification('You do not have permission to create this type of user', 'error');
+            return;
+        }
+
+        // Create new user
+        const newUser = {
+            id: `${userType === 'admin' ? 'ADM' : 'VOL'}-${Date.now()}`,
+            username: username,
+            name: name,
+            email: email,
+            role: userType === 'admin' ? role : null,
+            type: userType,
+            status: 'active',
+            created: new Date().toISOString().split('T')[0],
+            createdBy: currentAdmin.id
+        };
+
+        if (userType === 'volunteer') {
+            newUser.team = team;
+            newUser.permissions = [];
+        } else {
+            newUser.permissions = permissionSystem[role].permissions;
+        }
+
+        systemUsers.push(newUser);
+        renderUsers();
+        updateUserStats();
+        
+        // Log activity
+        logActivity(currentAdmin.name, `Created new ${userType} account: ${name}`);
+        
+        showNotification(`Successfully created ${userType} account for ${name}`, 'success');
+        closeModal('createUserModal');
+        clearCreateUserForm();
+    }
+
+    function clearCreateUserForm() {
+        document.getElementById('newUserName').value = '';
+        document.getElementById('newUserUsername').value = '';
+        document.getElementById('newUserPassword').value = '';
+        document.getElementById('newUserEmail').value = '';
+        document.getElementById('newUserTeam').value = '';
+    }
+
+    function toggleUserStatus(userId) {
+        const user = systemUsers.find(u => u.id === userId);
+        if (user) {
+            user.status = user.status === 'active' ? 'inactive' : 'active';
+            renderUsers();
+            
+            const action = user.status === 'active' ? 'activated' : 'deactivated';
+            logActivity(currentAdmin.name, `${action} user account: ${user.name}`);
+            showNotification(`User ${user.name} has been ${action}`, 'success');
+        }
+    }
+
+    function resetPassword(userId) {
+        const user = systemUsers.find(u => u.id === userId);
+        if (user) {
+            // In real app, this would send a password reset email
+            showNotification(`Password reset initiated for ${user.name}. They will receive an email with instructions.`, 'info');
+            logActivity(currentAdmin.name, `Initiated password reset for: ${user.name}`);
+        }
+    }
+
+    function editUser(userId) {
+        const user = systemUsers.find(u => u.id === userId);
+        showNotification(`Edit user functionality for ${user.name} would open here`, 'info');
+    }
+
+    function deleteUser(userId) {
+        const user = systemUsers.find(u => u.id === userId);
+        if (user && confirm(`Are you sure you want to delete user ${user.name}? This action cannot be undone.`)) {
+            systemUsers = systemUsers.filter(u => u.id !== userId);
+            renderUsers();
+            updateUserStats();
+            showNotification(`User ${user.name} has been deleted`, 'success');
+            logActivity(currentAdmin.name, `Deleted user account: ${user.name}`);
+        }
+    }
+
+    // ===== SYSTEM SETTINGS =====
+    function saveSystemSettings() {
+        // Save settings logic would go here
+        showNotification('System settings saved successfully', 'success');
+        logActivity(currentAdmin.name, 'Updated system configuration settings');
+    }
+
+    // ===== ACTIVITY LOGS =====
+    function loadActivityLogs() {
+        // Simulated activity logs
+        activityLogs = [
+            { user: 'Super Administrator', action: 'Created new admin account: Operations Director', time: '2 minutes ago', type: 'user' },
+            { user: 'System Administrator', action: 'Created new volunteer account: Fatima Begum', time: '15 minutes ago', type: 'user' },
+            { user: 'Operations Director', action: 'Created new volunteer account: Rahim Ahmed', time: '1 hour ago', type: 'user' },
+            { user: 'System Administrator', action: 'Deactivated user account: Test User', time: '2 hours ago', type: 'user' },
+            { user: 'Abdul Rahman', action: 'Completed rescue task in Zone 2B', time: '3 hours ago', type: 'volunteer' },
+            { user: 'System', action: 'Automatic backup completed successfully', time: '4 hours ago', type: 'system' }
+        ];
+
+        renderActivityLogs();
+    }
+
+    function renderActivityLogs(filter = 'all') {
+        const logsContainer = document.getElementById('systemLogs');
+        logsContainer.innerHTML = '';
+
+        const filteredLogs = filter === 'all' ? activityLogs : activityLogs.filter(log => log.type === filter);
+
+        filteredLogs.forEach(log => {
+            const logItem = document.createElement('div');
+            logItem.className = 'activity-item';
+            logItem.innerHTML = `
+                <div class="activity-header">
+                    <div class="activity-user">${log.user}</div>
+                    <div class="activity-time">${log.time}</div>
+                </div>
+                <div class="activity-action">${log.action}</div>
+            `;
+            logsContainer.appendChild(logItem);
+        });
+    }
+
+    function filterLogs(type) {
+        renderActivityLogs(type);
+    }
+
+    function clearLogs() {
+        if (confirm('Are you sure you want to clear all activity logs? This action cannot be undone.')) {
+            activityLogs = [];
+            renderActivityLogs();
+            showNotification('Activity logs cleared successfully', 'success');
+            logActivity(currentAdmin.name, 'Cleared all system activity logs');
+        }
+    }
+
+    function logActivity(user, action) {
+        const timestamp = new Date().toLocaleTimeString();
+        activityLogs.unshift({
+            user: user,
+            action: action,
+            time: timestamp,
+            type: user === 'System' ? 'system' : 'user'
+        });
+
+        // Keep only last 100 logs
+        if (activityLogs.length > 100) {
+            activityLogs.pop();
+        }
+
+        // Update logs display if we're on the logs tab
+        if (document.getElementById('logs').classList.contains('active')) {
+            renderActivityLogs();
+        }
+    }
+
+    // ===== SYSTEM DATA =====
+    function loadSystemData() {
+        // Simulate loading system data
+        setTimeout(() => {
+            document.getElementById('systemStatus').textContent = 'Online';
+            document.getElementById('systemStatus').style.color = 'var(--success)';
+        }, 1000);
+    }
+
+    function generateSystemReport() {
+        showNotification('System report generation started. You will be notified when it is ready.', 'info');
+        logActivity(currentAdmin.name, 'Generated system status report');
+        
+        // Simulate report generation
+        setTimeout(() => {
+            showNotification('System report has been generated and saved to reports folder.', 'success');
+        }, 3000);
+    }
+
+    // ===== UTILITY FUNCTIONS =====
+    function getCurrentUser() {
+        return JSON.parse(localStorage.getItem('currentUser') || sessionStorage.getItem('currentUser'));
+    }
+
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
+    function showNotification(message, type = 'info') {
+        const notification = document.getElementById('notification');
+        const messageEl = document.getElementById('notificationMessage');
+        
+        // Set message and type
+        messageEl.textContent = message;
+        notification.className = `notification ${type}`;
+        
+        // Show notification
+        notification.style.display = 'flex';
+        
+        // Auto-hide after 5 seconds
+        setTimeout(() => {
+            hideNotification();
+        }, 5000);
+    }
+
+    function hideNotification() {
+        document.getElementById('notification').style.display = 'none';
+    }
+
+    function systemLogout() {
+        if (confirm('Are you sure you want to logout?')) {
+            localStorage.removeItem('currentUser');
+            sessionStorage.removeItem('currentUser');
+            window.location.href = 'login.html?logout=true';
+        }
+    }
+
+    // Make functions available globally
+    window.switchTab = switchTab;
+    window.showCreateUserModal = showCreateUserModal;
+    window.createNewUser = createNewUser;
+    window.closeModal = closeModal;
+    window.toggleUserStatus = toggleUserStatus;
+    window.resetPassword = resetPassword;
+    window.editUser = editUser;
+    window.deleteUser = deleteUser;
+    window.saveSystemSettings = saveSystemSettings;
+    window.filterLogs = filterLogs;
+    window.clearLogs = clearLogs;
+    window.generateSystemReport = generateSystemReport;
+    window.systemLogout = systemLogout;
+</script>
+</body>
+</html>

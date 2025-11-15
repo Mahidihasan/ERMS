@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emergency Alert System</title>
+    <!-- DATABASE NOTE: Consider adding meta tags for security and SEO -->
+    <!-- <meta name="description" content="Emergency alert system for immediate help requests"> -->
+    <!-- <meta name="author" content="Your Organization"> -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <style>
+        /* All your existing CSS remains unchanged */
+        :root {
+            --accent-red: #ff4c4c;
+            --accent-blue: #3fa9f5;
+            --accent-green: #27ae60;
+            --bg-dark: #0a0a0f;
+            --bg-card: #1a1a2e;
+            --bg-input: #2a2a3a;
+            --border-dark: #2d2d42;
+            --border-light: #3a3a4a;
+            --text-light: #f0f0f0;
+            --text-muted: #a0a0b0;
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: "Inter", "Segoe UI", sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0c0c0c 0%, #1a1a2e 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+            color: var(--text-light);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-dark);
+            border-radius: var(--radius);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+            overflow: hidden;
+            animation: fadeIn 0.6s ease;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #c0392b 0%, #e74c3c 100%);
+            text-align: center;
+            padding: 18px;
+            border-bottom: 2px solid var(--border-dark);
+        }
+
+        .header h1 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .header p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .form-container {
+            padding: 20px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            margin: 15px 0 10px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 6px;
+            border-left: 3px solid var(--accent-red);
+            padding-left: 10px;
+        }
+
+        .section-title:first-child {
+            margin-top: 0;
+        }
+
+        .form-row,
+        .form-row-compact {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .required::after {
+            content: " *";
+            color: var(--accent-red);
+        }
+
+        input,
+        select,
+        textarea {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border-light);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 14px;
+            color: var(--text-light);
+            transition: var(--transition);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--accent-blue);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(63, 169, 245, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+            max-height: 100px;
+        }
+
+        .file-label {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            background: var(--bg-input);
+            border: 1px dashed var(--border-light);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 13px;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .file-label:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-light);
+        }
+
+        .file-attachment {
+            position: relative;
+        }
+
+        .file-attachment input[type="file"] {
+            position: absolute;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        /* ADDRESS AND LOCATION IN SAME ROW */
+        .address-location-row {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 15px;
+            align-items: flex-end;
+        }
+
+        .address-field {
+            flex: 1;
+        }
+
+        .location-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .location-button {
+            background: var(--accent-blue);
+            border: 1px solid #2980b9;
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: #fff;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .location-button:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .location-display {
+            font-size: 11px;
+            color: var(--accent-blue);
+            background: rgba(63, 169, 245, 0.1);
+            border: 1px solid rgba(63, 169, 245, 0.3);
+            border-radius: 6px;
+            padding: 6px 8px;
+            margin-top: 6px;
+            text-align: center;
+            min-height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .location-display.empty {
+            color: var(--text-muted);
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--border-light);
+            font-style: italic;
+        }
+
+        .help-button {
+            background: linear-gradient(135deg, #e74c3c 0%, #c0392b 100%);
+            color: white;
+            border: 1px solid #c0392b;
+            padding: 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: var(--radius);
+            width: 100%;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+            transition: var(--transition);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            margin-top: 20px;
+        }
+
+        .help-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.6);
+        }
+
+        .additional-info input {
+            height: 10px;
+            width: 100%;
+        }
+
+        @media (max-width: 480px) {
+
+            .form-row,
+            .form-row-compact,
+            .address-location-row {
+                flex-direction: column;
+            }
+        }
+
+        .location-display-small,
+        #location {
+            flex: 1;
+        }
+
+        .location-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 6px;
+            width: 100%;
+        }
+
+        #Location {
+            width: 40%;
+            font-size: 13px;
+            color: var(--text-muted);
+            margin-bottom: 0;
+            text-align: left;
+        }
+
+        .location-display-small {
+            width: 100%;
+            font-size: 10px;
+            color: var(--accent-blue);
+            text-align: right;
+            min-height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: left;
+            transition: all 0.3s ease;
+            word-break: break-all;
+        }
+
+        .location-display-small.empty {
+            color: var(--text-muted);
+            font-style: italic;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fa-solid fa-triangle-exclamation"></i> Emergency Alert</h1>
+            <p>Send help request immediately</p>
+        </div>
+
+        <div class="form-container">
+            <!-- DATABASE INTEGRATION: 
+                 Change form action to your backend endpoint
+                 Add method="POST" and enctype for file uploads -->
+            <form id="emergencyForm" method="POST" action="/api/emergency-alerts" enctype="multipart/form-data">
+                <div class="form-row">
+                    <div class="form-group">
+                        <!-- DATABASE: Store in 'users' table or 'emergency_alerts' table as 'full_name' -->
+                        <label for="name" class="required">Name</label>
+                        <input type="text" id="name" name="full_name" placeholder="Full name" required />
+                    </div>
+                    <div class="form-group">
+                        <!-- DATABASE: Store as 'phone_number' field, validate format server-side -->
+                        <label for="phone" class="required">Phone</label>
+                        <input type="tel" id="phone" name="phone_number" placeholder="Phone number" required />
+                    </div>
+                </div>
+                <div class="form-row-compact">
+                    <div class="form-group emergency-type">
+                        <!-- DATABASE: Store as 'emergency_type' ENUM or foreign key to emergency_types table -->
+                        <label for="emergencyType" class="required">Emergency Type</label>
+                        <select id="emergencyType" name="emergency_type" required>
+                            <option value="">Select Type</option>
+                            <option value="medical">Medical Emergency</option>
+                            <option value="fire">Fire</option>
+                            <option value="accident">Accident</option>
+                            <option value="natural-disaster">Natural Disaster</option>
+                            <option value="crime">Crime in Progress</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group priority-case">
+                        <!-- DATABASE: Store as 'priority_level' ENUM('low','medium','high','critical') -->
+                        <label for="priority" class="required">Priority Level</label>
+                        <select id="priority" name="priority_level" required>
+                            <option value="">Select Priority</option>
+                            <option value="low">Low</option>
+                            <option value="medium">Medium</option>
+                            <option value="high">High</option>
+                            <option value="critical">Critical</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row-compact">
+                    <div class="form-group">
+                        <!-- DATABASE: Store as 'people_count' INTEGER, validate > 0 -->
+                        <label for="peopleCount">Number of People</label>
+                        <input type="number" id="peopleCount" name="people_count" min="1" value="1" />
+                    </div>
+                    <div class="form-group file-attachment">
+                        <!-- DATABASE: Store file in cloud storage (AWS S3, etc.) and save file path in database -->
+                        <label for="attachment">Attachment</label>
+                        <div class="file-label" id="fileLabel">
+                            <i class="fas fa-paperclip"></i><span id="fileText">Attach files</span>
+                        </div>
+                        <input type="file" id="attachment" name="attachment" />
+                    </div>
+                </div>
+
+                <!-- ADDRESS AND LOCATION IN SAME ROW -->
+                <div class="address-location-row">
+                    <div class="form-group address-field">
+                        <!-- DATABASE: Store as 'address' TEXT field for human-readable location -->
+                        <label for="address" class="required">Address</label>
+                        <input type="text" id="address" name="address" placeholder="Current address" required />
+                    </div>
+
+                    <div class="form-group location-group">
+                        <div class="location-header">
+                            <!-- DATABASE: Store coordinates as separate FLOAT fields 'latitude' and 'longitude' -->
+                            <label for="Location" id="Location" class="required">Location</label>
+                            <div class="location-display-small empty" id="locationDisplay">
+                                No location data yet
+                            </div>
+                        </div>
+                        <button type="button" class="location-button" id="getLocation">
+                            <i class="fas fa-location-arrow"></i> Get Location
+                        </button>
+                        <!-- DATABASE: Hidden fields to store coordinates for form submission -->
+                        <input type="hidden" id="latitude" name="latitude">
+                        <input type="hidden" id="longitude" name="longitude">
+                    </div>
+                </div>
+                <div class="form-group additional-info">
+                    <!-- DATABASE: Store as 'additional_details' TEXT field -->
+                    <label for="additionalInfo">Additional Details</label>
+                    <textarea id="additionalInfo" name="additional_details"
+                        placeholder="Provide any additional information that might help responders"></textarea>
+                </div>
+
+                <!-- DATABASE: Consider adding CSRF token for security -->
+                <!-- <input type="hidden" name="csrf_token" value="your_csrf_token_here"> -->
+
+                <button type="submit" class="help-button">
+                    <i class="fa-solid fa-paper-plane"></i> SEND HELP REQUEST
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.getElementById("attachment");
+        const fileText = document.getElementById("fileText");
+
+        fileInput.addEventListener("change", () => {
+            if (fileInput.files.length > 0) {
+                const name = fileInput.files[0].name;
+                fileText.textContent =
+                    name.length > 20 ? name.slice(0, 20) + "..." : name;
+            } else {
+                fileText.textContent = "Attach files";
+            }
+        });
+
+        document.getElementById("getLocation").addEventListener("click", function () {
+            const display = document.getElementById("locationDisplay");
+            if (navigator.geolocation) {
+                this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Locating...';
+                navigator.geolocation.getCurrentPosition(
+                    (pos) => {
+                        const { latitude, longitude } = pos.coords;
+                        const locationText = `${latitude.toFixed(4)},${longitude.toFixed(4)}`;
+                        
+                        // Update display
+                        display.textContent = locationText;
+                        display.classList.remove('empty');
+                        
+                        // DATABASE: Store coordinates in hidden fields for form submission
+                        document.getElementById('latitude').value = latitude;
+                        document.getElementById('longitude').value = longitude;
+                        
+                        this.innerHTML = '<i class="fas fa-location-arrow"></i> Get Location';
+                    },
+                    () => {
+                        display.textContent = 'Location failed';
+                        display.classList.add('empty');
+                        this.innerHTML = '<i class="fas fa-location-arrow"></i> Get Location';
+                    }
+                );
+            } else {
+                display.textContent = 'Not supported';
+                display.classList.add('empty');
+            }
+        });
+
+        // DATABASE INTEGRATION: Enhanced form submission with AJAX
+        document.getElementById("emergencyForm").addEventListener("submit", async (e) => {
+            e.preventDefault();
+            const btn = e.target.querySelector(".help-button");
+            const originalHTML = btn.innerHTML;
+
+            // Show sending state
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> SENDING...';
+            btn.disabled = true;
+
+            try {
+                // DATABASE: Collect all form data
+                const formData = new FormData(e.target);
+                
+                // DATABASE: Send to backend API
+                const response = await fetch('/api/emergency-alerts', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        // DATABASE: Add authentication token if needed
+                        // 'Authorization': 'Bearer ' + localStorage.getItem('token')
+                    }
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    
+                    // Success state
+                    btn.innerHTML = '<i class="fa-solid fa-check"></i> REQUEST SENT!';
+                    btn.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+                    btn.style.borderColor = '#27ae60';
+
+                    setTimeout(() => {
+                        alert("Emergency alert submitted! Help is on the way. Reference ID: " + (result.alertId || ''));
+                        e.target.reset();
+                        fileText.textContent = "Attach files";
+                        document.getElementById("locationDisplay").textContent = "No location data yet";
+                        document.getElementById("locationDisplay").classList.add('empty');
+                        btn.innerHTML = originalHTML;
+                        btn.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                        btn.style.borderColor = '#c0392b';
+                        btn.disabled = false;
+                    }, 1600);
+                } else {
+                    throw new Error('Server error: ' + response.status);
+                }
+            } catch (error) {
+                console.error('Database submission error:', error);
+                alert('Failed to submit emergency alert. Please try again or call emergency services directly.');
+                
+                // Reset button state
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+
+            /* DATABASE: Alternative traditional form submission (remove async/await above)
+            // Traditional form submission (no AJAX)
+            btn.innerHTML = '<i class="fa-solid fa-check"></i> REQUEST SENT!';
+            btn.style.background = 'linear-gradient(135deg, #27ae60 0%, #2ecc71 100%)';
+            btn.style.borderColor = '#27ae60';
+
+            setTimeout(() => {
+                // DATABASE: This will submit the form to the action URL
+                // e.target.submit(); // Uncomment for traditional form submission
+                
+                alert("Emergency alert submitted! Help is on the way.");
+                e.target.reset();
+                fileText.textContent = "Attach files";
+                document.getElementById("locationDisplay").textContent = "No location data yet";
+                document.getElementById("locationDisplay").classList.add('empty');
+                btn.innerHTML = originalHTML;
+                btn.style.background = 'linear-gradient(135deg, #e74c3c 0%, #c0392b 100%)';
+                btn.style.borderColor = '#c0392b';
+            }, 1600);
+            */
+        });
+
+        /* DATABASE SUGGESTED TABLE STRUCTURE:
+        CREATE TABLE emergency_alerts (
+            id SERIAL PRIMARY KEY,
+            full_name VARCHAR(100) NOT NULL,
+            phone_number VARCHAR(20) NOT NULL,
+            emergency_type VARCHAR(50) NOT NULL,
+            priority_level VARCHAR(20) NOT NULL,
+            people_count INTEGER DEFAULT 1,
+            address TEXT NOT NULL,
+            latitude DECIMAL(10, 8),
+            longitude DECIMAL(11, 8),
+            additional_details TEXT,
+            attachment_path VARCHAR(255),
+            created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            status VARCHAR(20) DEFAULT 'pending'
+        );
+        */
+    </script>
+</body>
+</html>

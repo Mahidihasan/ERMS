@@ -1,0 +1,1423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Volunteer Management - Emergency Response</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        /* ===== CSS Reset & Base Styles ===== */
+        * { 
+            box-sizing: border-box; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        html, body { 
+            height: 100%; 
+            font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+            background: #1b1b1c;
+            color: #eee;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        /* ===== Header Styles ===== */
+        .header {
+            height: 70px;
+            background: #e02b2b;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 28px;
+            box-shadow: 0 2px 0 rgba(0,0,0,0.6);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            letter-spacing: .6px;
+            color: #fff;
+            margin-left: 4px;
+            font-family: "Baloo 2", "Inter", sans-serif;
+        }
+
+        .admin-menu-trigger {
+            background: rgba(255, 255, 255, 0.15);
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .admin-menu-trigger:hover {
+            background: rgba(255, 255, 255, 0.25);
+        }
+
+        /* ===== Admin Sidebar ===== */
+        .admin-sidebar {
+            position: fixed;
+            top: 70px;
+            right: 0;
+            width: 280px;
+            height: calc(100vh - 70px);
+            background: #272727;
+            border-left: 2px solid rgba(0,0,0,0.45);
+            transform: translateX(100%);
+            transition: transform 0.3s ease;
+            z-index: 999;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .admin-sidebar.active {
+            transform: translateX(0);
+        }
+
+        .admin-sidebar h3 {
+            color: #eee;
+            margin-bottom: 20px;
+            font-size: 18px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .admin-sidebar ul {
+            list-style: none;
+        }
+
+        .admin-sidebar li {
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .admin-sidebar li:hover {
+            background: #383838;
+        }
+
+        .admin-sidebar li.active {
+            background: #383838;
+            border-left: 4px solid #e02b2b;
+        }
+
+        /* ===== Volunteer Management Styles ===== */
+        .volunteer-page {
+            padding: 20px;
+            background: #1b1b1c;
+            min-height: calc(100vh - 70px);
+        }
+
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #383838;
+        }
+
+        .page-header h1 {
+            color: #4dabf7;
+            font-size: 28px;
+            margin: 0;
+        }
+
+        .back-btn {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 10px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .back-btn:hover {
+            background: #666;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: #e06a51;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-primary:hover {
+            background: #d4593f;
+        }
+
+        .btn-secondary {
+            background: #555;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .btn-secondary:hover {
+            background: #666;
+        }
+
+        /* ===== Dashboard Layout ===== */
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sidebar-content {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* ===== Stats Cards ===== */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #2f2f2f, #242424);
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .stat-card h3 {
+            font-size: 32px;
+            margin-bottom: 8px;
+            color: #f6f6f6;
+        }
+
+        .stat-card p {
+            color: #cfcfcf;
+            font-size: 14px;
+            margin: 0;
+        }
+
+        .stat-card.active h3 { color: #4caf50; }
+        .stat-card.available h3 { color: #4dabf7; }
+        .stat-card.onduty h3 { color: #ff9800; }
+        .stat-card.reserved h3 { color: #9c27b0; }
+
+        /* ===== Map Container ===== */
+        .map-container {
+            background: #272727;
+            border-radius: 12px;
+            padding: 15px;
+            border: 1px solid rgba(255,255,255,0.05);
+            height: 400px;
+        }
+
+        #volunteerMap {
+            height: 100%;
+            width: 100%;
+            border-radius: 8px;
+        }
+
+        /* ===== Control Panels ===== */
+        .control-panel {
+            background: #272727;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .panel-header h3 {
+            color: #4dabf7;
+            font-size: 16px;
+            margin: 0;
+        }
+
+        .search-box {
+            position: relative;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 10px 40px 10px 15px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 8px;
+            color: #eee;
+            font-size: 14px;
+        }
+
+        .search-box span {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .filter-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .filter-controls select {
+            padding: 8px 12px;
+            background: #2a2a2a;
+            border: 1px solid #444;
+            border-radius: 6px;
+            color: #eee;
+            font-size: 13px;
+            cursor: pointer;
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* ===== Volunteer List ===== */
+        .volunteer-list {
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .volunteer-item {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            border-left: 4px solid #4dabf7;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .volunteer-item:hover {
+            background: #383838;
+            transform: translateY(-2px);
+        }
+
+        .volunteer-item.active {
+            border-left-color: #4caf50;
+            background: #1a2a1a;
+        }
+
+        .volunteer-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+
+        .volunteer-name {
+            font-weight: 600;
+            color: #eaeaea;
+            font-size: 16px;
+        }
+
+        .volunteer-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        .status-available { background: #4caf50; color: white; }
+        .status-onduty { background: #ff9800; color: black; }
+        .status-reserved { background: #9c27b0; color: white; }
+        .status-offline { background: #757575; color: white; }
+
+        .volunteer-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 12px;
+            color: #ccc;
+        }
+
+        .volunteer-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-top: 8px;
+        }
+
+        .skill-tag {
+            padding: 2px 6px;
+            background: #383838;
+            border-radius: 10px;
+            font-size: 10px;
+            color: #bbb;
+        }
+
+        /* ===== Teams Panel ===== */
+        .teams-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .team-card {
+            background: #2a2a2a;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid;
+        }
+
+        .team-card.rescue { border-left-color: #e02b2b; }
+        .team-card.medical { border-left-color: #4caf50; }
+        .team-card.logistics { border-left-color: #ff9800; }
+        .team-card.communication { border-left-color: #4dabf7; }
+
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .team-name {
+            font-weight: 600;
+            color: #eaeaea;
+            font-size: 14px;
+        }
+
+        .team-count {
+            background: #383838;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            color: #ccc;
+        }
+
+        .team-members {
+            font-size: 12px;
+            color: #bbb;
+        }
+
+        /* ===== Modal Styles ===== */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            padding: 20px;
+        }
+
+        .modal {
+            background: #2a2a2a;
+            border-radius: 12px;
+            padding: 0;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            border: 1px solid #444;
+        }
+
+        .modal-header {
+            padding: 20px 25px 0;
+            border-bottom: 1px solid #383838;
+            margin-bottom: 0;
+        }
+
+        .modal-header h3 {
+            margin: 0 0 20px 0;
+            color: #4dabf7;
+            font-size: 18px;
+        }
+
+        .modal-body {
+            padding: 20px 25px;
+        }
+
+        .modal-footer {
+            padding: 15px 25px 20px;
+            border-top: 1px solid #383838;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        /* ===== Form Styles ===== */
+        .compact-form .form-group {
+            margin-bottom: 15px;
+        }
+
+        .compact-form label {
+            display: block;
+            color: #ccc;
+            font-size: 13px;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .compact-form input,
+        .compact-form select,
+        .compact-form textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #444;
+            border-radius: 6px;
+            background: #333;
+            color: #eee;
+            font-size: 14px;
+            transition: border-color 0.2s ease;
+        }
+
+        .compact-form input:focus,
+        .compact-form select:focus,
+        .compact-form textarea:focus {
+            outline: none;
+            border-color: #4dabf7;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-section {
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #383838;
+        }
+
+        .form-section h4 {
+            color: #4dabf7;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        .skills-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .skill-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        /* ===== Notification Styles ===== */
+        .notification {
+            position: fixed;
+            top: 80px;
+            right: 20px;
+            background: #272727;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 3000;
+            max-width: 300px;
+        }
+        .notification.success { border-left: 4px solid #2fb26a; }
+        .notification.error { border-left: 4px solid #e02b2b; }
+        .notification.info { border-left: 4px solid #3a86ff; }
+        .notification-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .notification-close {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            margin-left: 10px;
+        }
+
+        /* ===== Responsive Design ===== */
+        @media (max-width: 1200px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .dashboard-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+            
+            .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .volunteer-details {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header class="header">
+        <h1>Emergency Response</h1>
+        <button class="admin-menu-trigger" id="adminMenuTrigger">
+            <span>Admin</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M9 18l6-6-6-6"/>
+            </svg>
+        </button>
+    </header>
+
+    <!-- ADMIN SIDEBAR -->
+    <aside class="admin-sidebar" id="adminSidebar">
+        <h3>Admin Menu</h3>
+        <ul>
+            <li onclick="window.location.href='admin.html'">📊 Analytics Dashboard</li>
+            <li onclick="window.location.href='medicine-inventory.html'">💊 Medicine & First Aid</li>
+            <li onclick="window.location.href='food-inventory.html'">🍲 Food & Water</li>
+            <li onclick="window.location.href='equipment-inventory.html'">🛠️ Emergency Equipment</li>
+            <li onclick="window.location.href='donation-inventory.html'">💰 Donation Management</li>
+            <li class="active">👥 Volunteer Management</li>
+            <li>⏳ Pending Requests</li>
+            <li>📈 Generate Reports</li>
+            <li>🚩 Priority Flags</li>
+            <li>⚙️ System Settings</li>
+            <li>🚪 Log out</li>
+        </ul>
+    </aside>
+
+    <!-- VOLUNTEER MANAGEMENT CONTENT -->
+    <div class="volunteer-page">
+        <div class="page-header">
+            <button class="back-btn" onclick="window.location.href='admin.html'">← Back to Dashboard</button>
+            <h1>Volunteer Management</h1>
+            <div class="action-buttons">
+                <button class="btn-secondary" onclick="exportVolunteerReport()">📊 Export Report</button>
+                <button class="btn-primary" onclick="showAddVolunteerForm()">+ Add Volunteer</button>
+            </div>
+        </div>
+
+        <!-- Statistics -->
+        <div class="stats-grid">
+            <div class="stat-card active">
+                <h3 id="total-volunteers">0</h3>
+                <p>Total Volunteers</p>
+            </div>
+            <div class="stat-card available">
+                <h3 id="available-volunteers">0</h3>
+                <p>Available Now</p>
+            </div>
+            <div class="stat-card onduty">
+                <h3 id="onduty-volunteers">0</h3>
+                <p>On Active Duty</p>
+            </div>
+            <div class="stat-card reserved">
+                <h3 id="reserved-volunteers">0</h3>
+                <p>Reserved/Backup</p>
+            </div>
+        </div>
+
+        <!-- Main Dashboard -->
+        <div class="dashboard-container">
+            <div class="main-content">
+                <!-- Map -->
+                <div class="control-panel">
+                    <div class="panel-header">
+                        <h3>📍 Live Volunteer Locations</h3>
+                        <button class="btn-secondary" onclick="refreshMap()">🔄 Refresh</button>
+                    </div>
+                    <div class="map-container">
+                        <div id="volunteerMap"></div>
+                    </div>
+                </div>
+
+                <!-- Teams Overview -->
+                <div class="control-panel">
+                    <div class="panel-header">
+                        <h3>👥 Active Teams</h3>
+                    </div>
+                    <div class="teams-container" id="teamsContainer">
+                        <!-- Teams will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- Volunteer List -->
+                <div class="control-panel">
+                    <div class="panel-header">
+                        <h3>🧑‍🤝‍🧑 Volunteer List</h3>
+                    </div>
+                    <div class="search-box">
+                        <input type="text" id="volunteerSearch" placeholder="Search volunteers..." onkeyup="filterVolunteers()">
+                        <span>🔍</span>
+                    </div>
+                    <div class="filter-controls">
+                        <select id="statusFilter" onchange="filterVolunteers()">
+                            <option value="all">All Status</option>
+                            <option value="available">Available</option>
+                            <option value="onduty">On Duty</option>
+                            <option value="reserved">Reserved</option>
+                            <option value="offline">Offline</option>
+                        </select>
+                        <select id="skillFilter" onchange="filterVolunteers()">
+                            <option value="all">All Skills</option>
+                            <option value="medical">Medical</option>
+                            <option value="rescue">Rescue</option>
+                            <option value="logistics">Logistics</option>
+                            <option value="communication">Communication</option>
+                        </select>
+                    </div>
+                    <div class="volunteer-list" id="volunteerList">
+                        <!-- Volunteers will be populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Volunteer Modal -->
+    <div id="addVolunteerModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>👤 Add New Volunteer</h3>
+            </div>
+            <div class="modal-body">
+                <form id="volunteerForm" class="compact-form" onsubmit="addNewVolunteer(event)">
+                    <div class="form-section">
+                        <h4>Personal Information</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="volunteerName">Full Name *</label>
+                                <input type="text" id="volunteerName" required placeholder="Enter full name">
+                            </div>
+                            <div class="form-group">
+                                <label for="volunteerPhone">Phone Number *</label>
+                                <input type="tel" id="volunteerPhone" required placeholder="+8801XXXXXXXXX">
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="volunteerEmail">Email Address</label>
+                                <input type="email" id="volunteerEmail" placeholder="volunteer@example.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="volunteerId">Volunteer ID *</label>
+                                <input type="text" id="volunteerId" required placeholder="VOL-001">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="volunteerAddress">Home Address</label>
+                            <textarea id="volunteerAddress" placeholder="Enter full address"></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Skills & Qualifications</h4>
+                        <div class="skills-selector">
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills" value="first-aid"> First Aid/CPR
+                            </label>
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills" value="rescue"> Rescue Operations
+                            </label>
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills" value="medical"> Medical Training
+                            </label>
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills" value="boat"> Boat Operation
+                            </label>
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills" value="communication"> Communication
+                            </label>
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills" value="logistics"> Logistics
+                            </label>
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills" value="counseling"> Counseling
+                            </label>
+                            <label class="skill-checkbox">
+                                <input type="checkbox" name="skills" value="technical"> Technical Skills
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Assignment & Status</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="volunteerStatus">Status *</label>
+                                <select id="volunteerStatus" required>
+                                    <option value="available">Available</option>
+                                    <option value="onduty">On Duty</option>
+                                    <option value="reserved">Reserved</option>
+                                    <option value="offline">Offline</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="volunteerTeam">Assigned Team</label>
+                                <select id="volunteerTeam">
+                                    <option value="">Not Assigned</option>
+                                    <option value="rescue-alpha">Rescue Team Alpha</option>
+                                    <option value="medical-bravo">Medical Team Bravo</option>
+                                    <option value="logistics-charlie">Logistics Team Charlie</option>
+                                    <option value="comms-delta">Communication Team Delta</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="volunteerRank">Rank/Level</label>
+                                <select id="volunteerRank">
+                                    <option value="trainee">Trainee</option>
+                                    <option value="volunteer">Volunteer</option>
+                                    <option value="senior">Senior Volunteer</option>
+                                    <option value="team-lead">Team Lead</option>
+                                    <option value="coordinator">Coordinator</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="joinDate">Join Date *</label>
+                                <input type="date" id="joinDate" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h4>Emergency Contact</h4>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="emergencyContact">Contact Name *</label>
+                                <input type="text" id="emergencyContact" required placeholder="Emergency contact person">
+                            </div>
+                            <div class="form-group">
+                                <label for="emergencyPhone">Contact Phone *</label>
+                                <input type="tel" id="emergencyPhone" required placeholder="+8801XXXXXXXXX">
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeAddVolunteerForm()">Cancel</button>
+                <button type="submit" form="volunteerForm" class="btn-primary">Add Volunteer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Volunteer Details Modal -->
+    <div id="volunteerDetailsModal" class="modal-overlay" style="display: none;">
+        <div class="modal">
+            <div class="modal-header">
+                <h3>👤 Volunteer Details</h3>
+            </div>
+            <div class="modal-body">
+                <div id="volunteerDetailsContent">
+                    <!-- Details will be populated by JavaScript -->
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeVolunteerDetails()">Close</button>
+                <button type="button" class="btn-primary" onclick="editCurrentVolunteer()">Edit</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // ===== Volunteer Management System =====
+        let volunteers = [];
+        let filteredVolunteers = [];
+        let volunteerMap;
+        let mapMarkers = [];
+        let selectedVolunteer = null;
+
+        // Bangladesh coordinates for map
+        const BANGLADESH_CENTER = [23.6850, 90.3563];
+
+        // ===== INITIALIZATION =====
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Volunteer Management System Initialized');
+            
+            // Initialize sidebar toggle
+            document.getElementById('adminMenuTrigger').addEventListener('click', function() {
+                document.getElementById('adminSidebar').classList.toggle('active');
+            });
+
+            // Close sidebar when clicking outside
+            document.addEventListener('click', function(event) {
+                const sidebar = document.getElementById('adminSidebar');
+                const trigger = document.getElementById('adminMenuTrigger');
+                
+                if (sidebar.classList.contains('active') && 
+                    !sidebar.contains(event.target) && 
+                    !trigger.contains(event.target)) {
+                    sidebar.classList.remove('active');
+                }
+            });
+
+            // Load volunteer data
+            loadVolunteerData();
+            
+            // Initialize map
+            initMap();
+            
+            // Set default join date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('joinDate').value = today;
+            
+            // Start real-time updates simulation
+            startRealTimeUpdates();
+        });
+
+        // ===== DATA MANAGEMENT =====
+        function loadVolunteerData() {
+            // Sample data for demonstration
+            volunteers = [
+                {
+                    id: 'VOL-001',
+                    name: 'Abdul Rahman',
+                    phone: '+8801712345678',
+                    email: 'abdul.rahman@example.com',
+                    address: '123 Green Road, Dhaka',
+                    skills: ['first-aid', 'rescue', 'boat'],
+                    status: 'onduty',
+                    team: 'rescue-alpha',
+                    rank: 'team-lead',
+                    joinDate: '2023-05-15',
+                    emergencyContact: 'Fatima Rahman',
+                    emergencyPhone: '+8801812345678',
+                    location: { lat: 23.8103, lng: 90.4125 },
+                    lastActive: new Date(),
+                    assignmentsCompleted: 12
+                },
+                {
+                    id: 'VOL-002',
+                    name: 'Fatima Begum',
+                    phone: '+8801723456789',
+                    email: 'fatima.begum@example.com',
+                    address: '456 Medical Lane, Chattogram',
+                    skills: ['medical', 'first-aid', 'counseling'],
+                    status: 'available',
+                    team: 'medical-bravo',
+                    rank: 'senior',
+                    joinDate: '2023-06-20',
+                    emergencyContact: 'Mohammad Ali',
+                    emergencyPhone: '+8801823456789',
+                    location: { lat: 22.3569, lng: 91.7832 },
+                    lastActive: new Date(),
+                    assignmentsCompleted: 8
+                },
+                {
+                    id: 'VOL-003',
+                    name: 'Mohammad Ali',
+                    phone: '+8801734567890',
+                    email: 'mohammad.ali@example.com',
+                    address: '789 Tech Street, Sylhet',
+                    skills: ['technical', 'communication', 'logistics'],
+                    status: 'onduty',
+                    team: 'comms-delta',
+                    rank: 'coordinator',
+                    joinDate: '2023-03-10',
+                    emergencyContact: 'Ayesha Ali',
+                    emergencyPhone: '+8801834567890',
+                    location: { lat: 24.8949, lng: 91.8687 },
+                    lastActive: new Date(),
+                    assignmentsCompleted: 15
+                },
+                {
+                    id: 'VOL-004',
+                    name: 'Ayesha Khan',
+                    phone: '+8801745678901',
+                    email: 'ayesha.khan@example.com',
+                    address: '321 River View, Barishal',
+                    skills: ['boat', 'rescue', 'first-aid'],
+                    status: 'reserved',
+                    team: '',
+                    rank: 'volunteer',
+                    joinDate: '2023-08-05',
+                    emergencyContact: 'Rahim Khan',
+                    emergencyPhone: '+8801845678901',
+                    location: { lat: 22.7010, lng: 90.3535 },
+                    lastActive: new Date(),
+                    assignmentsCompleted: 5
+                },
+                {
+                    id: 'VOL-005',
+                    name: 'Rahim Ahmed',
+                    phone: '+8801756789012',
+                    email: 'rahim.ahmed@example.com',
+                    address: '654 Supply Road, Khulna',
+                    skills: ['logistics', 'technical'],
+                    status: 'available',
+                    team: 'logistics-charlie',
+                    rank: 'senior',
+                    joinDate: '2023-04-12',
+                    emergencyContact: 'Sofia Ahmed',
+                    emergencyPhone: '+8801856789012',
+                    location: { lat: 22.8456, lng: 89.5403 },
+                    lastActive: new Date(),
+                    assignmentsCompleted: 9
+                }
+            ];
+            
+            updateVolunteerUI();
+        }
+
+        function updateVolunteerUI() {
+            updateVolunteerStats();
+            filterVolunteers();
+            updateTeamsOverview();
+            updateMapMarkers();
+        }
+
+        function updateVolunteerStats() {
+            const total = volunteers.length;
+            const available = volunteers.filter(v => v.status === 'available').length;
+            const onduty = volunteers.filter(v => v.status === 'onduty').length;
+            const reserved = volunteers.filter(v => v.status === 'reserved').length;
+
+            document.getElementById('total-volunteers').textContent = total;
+            document.getElementById('available-volunteers').textContent = available;
+            document.getElementById('onduty-volunteers').textContent = onduty;
+            document.getElementById('reserved-volunteers').textContent = reserved;
+        }
+
+        // ===== MAP FUNCTIONS =====
+        function initMap() {
+            volunteerMap = L.map('volunteerMap').setView(BANGLADESH_CENTER, 7);
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors',
+                maxZoom: 18
+            }).addTo(volunteerMap);
+            
+            updateMapMarkers();
+        }
+
+        function updateMapMarkers() {
+            // Clear existing markers
+            mapMarkers.forEach(marker => volunteerMap.removeLayer(marker));
+            mapMarkers = [];
+            
+            // Add markers for each volunteer
+            volunteers.forEach(volunteer => {
+                if (volunteer.location && volunteer.status !== 'offline') {
+                    const markerColor = getStatusColor(volunteer.status);
+                    const icon = L.divIcon({
+                        className: 'volunteer-marker',
+                        html: `<div style="background: ${markerColor}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
+                        iconSize: [20, 20],
+                        iconAnchor: [10, 10]
+                    });
+                    
+                    const marker = L.marker([volunteer.location.lat, volunteer.location.lng], { icon })
+                        .addTo(volunteerMap)
+                        .bindPopup(`
+                            <div style="color: #333;">
+                                <strong>${volunteer.name}</strong><br>
+                                Status: ${getStatusText(volunteer.status)}<br>
+                                Team: ${volunteer.team || 'Not assigned'}<br>
+                                Skills: ${volunteer.skills.join(', ')}
+                            </div>
+                        `);
+                    
+                    mapMarkers.push(marker);
+                }
+            });
+        }
+
+        function refreshMap() {
+            updateMapMarkers();
+            showNotification('Map refreshed with latest locations', 'info');
+        }
+
+        // ===== FILTERING AND SEARCH =====
+        function filterVolunteers() {
+            const searchTerm = document.getElementById('volunteerSearch').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const skillFilter = document.getElementById('skillFilter').value;
+
+            filteredVolunteers = volunteers.filter(volunteer => {
+                const matchesSearch = volunteer.name.toLowerCase().includes(searchTerm) ||
+                                    volunteer.id.toLowerCase().includes(searchTerm) ||
+                                    (volunteer.team && volunteer.team.toLowerCase().includes(searchTerm));
+                const matchesStatus = statusFilter === 'all' || volunteer.status === statusFilter;
+                const matchesSkill = skillFilter === 'all' || volunteer.skills.includes(skillFilter);
+
+                return matchesSearch && matchesStatus && matchesSkill;
+            });
+
+            renderVolunteerList();
+        }
+
+        function renderVolunteerList() {
+            const listContainer = document.getElementById('volunteerList');
+            listContainer.innerHTML = '';
+
+            if (filteredVolunteers.length === 0) {
+                listContainer.innerHTML = `
+                    <div style="text-align: center; color: #888; padding: 40px;">
+                        No volunteers found matching your criteria
+                    </div>
+                `;
+                return;
+            }
+
+            filteredVolunteers.forEach(volunteer => {
+                const volunteerElement = createVolunteerElement(volunteer);
+                listContainer.appendChild(volunteerElement);
+            });
+        }
+
+        function createVolunteerElement(volunteer) {
+            const element = document.createElement('div');
+            element.className = `volunteer-item ${selectedVolunteer?.id === volunteer.id ? 'active' : ''}`;
+            element.onclick = () => selectVolunteer(volunteer);
+            
+            const lastActive = new Date(volunteer.lastActive).toLocaleTimeString();
+            
+            element.innerHTML = `
+                <div class="volunteer-header">
+                    <div class="volunteer-name">${volunteer.name}</div>
+                    <span class="volunteer-status status-${volunteer.status}">${getStatusText(volunteer.status)}</span>
+                </div>
+                <div class="volunteer-details">
+                    <div><strong>ID:</strong> ${volunteer.id}</div>
+                    <div><strong>Rank:</strong> ${getRankText(volunteer.rank)}</div>
+                    <div><strong>Team:</strong> ${volunteer.team || 'Not assigned'}</div>
+                    <div><strong>Last Active:</strong> ${lastActive}</div>
+                </div>
+                <div class="volunteer-skills">
+                    ${volunteer.skills.map(skill => `<span class="skill-tag">${getSkillText(skill)}</span>`).join('')}
+                </div>
+            `;
+            
+            return element;
+        }
+
+        function selectVolunteer(volunteer) {
+            selectedVolunteer = volunteer;
+            renderVolunteerList(); // Re-render to update active state
+            showVolunteerDetails(volunteer);
+        }
+
+        // ===== TEAMS MANAGEMENT =====
+        function updateTeamsOverview() {
+            const teamsContainer = document.getElementById('teamsContainer');
+            const teams = {
+                'rescue-alpha': { name: 'Rescue Team Alpha', type: 'rescue', members: [] },
+                'medical-bravo': { name: 'Medical Team Bravo', type: 'medical', members: [] },
+                'logistics-charlie': { name: 'Logistics Team Charlie', type: 'logistics', members: [] },
+                'comms-delta': { name: 'Communication Team Delta', type: 'communication', members: [] }
+            };
+            
+            // Count members for each team
+            volunteers.forEach(volunteer => {
+                if (volunteer.team && teams[volunteer.team]) {
+                    teams[volunteer.team].members.push(volunteer);
+                }
+            });
+            
+            teamsContainer.innerHTML = '';
+            
+            Object.values(teams).forEach(team => {
+                const teamCard = document.createElement('div');
+                teamCard.className = `team-card ${team.type}`;
+                
+                teamCard.innerHTML = `
+                    <div class="team-header">
+                        <div class="team-name">${team.name}</div>
+                        <span class="team-count">${team.members.length}</span>
+                    </div>
+                    <div class="team-members">
+                        ${team.members.slice(0, 3).map(member => member.name).join(', ')}
+                        ${team.members.length > 3 ? ` +${team.members.length - 3} more` : ''}
+                    </div>
+                `;
+                
+                teamsContainer.appendChild(teamCard);
+            });
+        }
+
+        // ===== VOLUNTEER MANAGEMENT =====
+        function showAddVolunteerForm() {
+            document.getElementById('addVolunteerModal').style.display = 'flex';
+            document.getElementById('volunteerForm').reset();
+            
+            // Set default join date to today
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('joinDate').value = today;
+        }
+
+        function closeAddVolunteerForm() {
+            document.getElementById('addVolunteerModal').style.display = 'none';
+        }
+
+        function addNewVolunteer(event) {
+            event.preventDefault();
+            
+            const formData = new FormData(document.getElementById('volunteerForm'));
+            const skills = Array.from(document.querySelectorAll('input[name="skills"]:checked'))
+                              .map(checkbox => checkbox.value);
+            
+            const newVolunteer = {
+                id: document.getElementById('volunteerId').value,
+                name: document.getElementById('volunteerName').value,
+                phone: document.getElementById('volunteerPhone').value,
+                email: document.getElementById('volunteerEmail').value,
+                address: document.getElementById('volunteerAddress').value,
+                skills: skills,
+                status: document.getElementById('volunteerStatus').value,
+                team: document.getElementById('volunteerTeam').value,
+                rank: document.getElementById('volunteerRank').value,
+                joinDate: document.getElementById('joinDate').value,
+                emergencyContact: document.getElementById('emergencyContact').value,
+                emergencyPhone: document.getElementById('emergencyPhone').value,
+                location: getRandomLocation(),
+                lastActive: new Date(),
+                assignmentsCompleted: 0
+            };
+            
+            volunteers.push(newVolunteer);
+            updateVolunteerUI();
+            closeAddVolunteerForm();
+            showNotification('Volunteer added successfully', 'success');
+        }
+
+        function showVolunteerDetails(volunteer) {
+            selectedVolunteer = volunteer;
+            const detailsContent = document.getElementById('volunteerDetailsContent');
+            const joinDate = new Date(volunteer.joinDate).toLocaleDateString();
+            const lastActive = new Date(volunteer.lastActive).toLocaleString();
+            
+            detailsContent.innerHTML = `
+                <div class="form-section">
+                    <h4>Personal Information</h4>
+                    <p><strong>Name:</strong> ${volunteer.name}</p>
+                    <p><strong>Volunteer ID:</strong> ${volunteer.id}</p>
+                    <p><strong>Phone:</strong> ${volunteer.phone}</p>
+                    <p><strong>Email:</strong> ${volunteer.email || 'Not provided'}</p>
+                    <p><strong>Address:</strong> ${volunteer.address || 'Not provided'}</p>
+                </div>
+
+                <div class="form-section">
+                    <h4>Assignment & Status</h4>
+                    <p><strong>Status:</strong> <span class="volunteer-status status-${volunteer.status}">${getStatusText(volunteer.status)}</span></p>
+                    <p><strong>Team:</strong> ${volunteer.team || 'Not assigned'}</p>
+                    <p><strong>Rank:</strong> ${getRankText(volunteer.rank)}</p>
+                    <p><strong>Join Date:</strong> ${joinDate}</p>
+                    <p><strong>Last Active:</strong> ${lastActive}</p>
+                    <p><strong>Assignments Completed:</strong> ${volunteer.assignmentsCompleted}</p>
+                </div>
+
+                <div class="form-section">
+                    <h4>Skills & Qualifications</h4>
+                    <div class="volunteer-skills">
+                        ${volunteer.skills.map(skill => `<span class="skill-tag">${getSkillText(skill)}</span>`).join('')}
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h4>Emergency Contact</h4>
+                    <p><strong>Contact Person:</strong> ${volunteer.emergencyContact}</p>
+                    <p><strong>Contact Phone:</strong> ${volunteer.emergencyPhone}</p>
+                </div>
+            `;
+            
+            document.getElementById('volunteerDetailsModal').style.display = 'flex';
+        }
+
+        function closeVolunteerDetails() {
+            document.getElementById('volunteerDetailsModal').style.display = 'none';
+            selectedVolunteer = null;
+            renderVolunteerList(); // Re-render to remove active state
+        }
+
+        function editCurrentVolunteer() {
+            if (selectedVolunteer) {
+                showNotification('Edit functionality would open here', 'info');
+                // In a real implementation, this would open an edit form
+            }
+        }
+
+        function exportVolunteerReport() {
+            showNotification('Volunteer report export started', 'info');
+            // In a real implementation, this would generate a CSV/PDF report
+        }
+
+        // ===== UTILITY FUNCTIONS =====
+        function getStatusText(status) {
+            const statusTexts = {
+                'available': 'Available',
+                'onduty': 'On Duty',
+                'reserved': 'Reserved',
+                'offline': 'Offline'
+            };
+            return statusTexts[status] || status;
+        }
+
+        function getStatusColor(status) {
+            const statusColors = {
+                'available': '#4caf50',
+                'onduty': '#ff9800',
+                'reserved': '#9c27b0',
+                'offline': '#757575'
+            };
+            return statusColors[status] || '#757575';
+        }
+
+        function getRankText(rank) {
+            const rankTexts = {
+                'trainee': 'Trainee',
+                'volunteer': 'Volunteer',
+                'senior': 'Senior Volunteer',
+                'team-lead': 'Team Lead',
+                'coordinator': 'Coordinator'
+            };
+            return rankTexts[rank] || rank;
+        }
+
+        function getSkillText(skill) {
+            const skillTexts = {
+                'first-aid': 'First Aid',
+                'rescue': 'Rescue',
+                'medical': 'Medical',
+                'boat': 'Boat Operation',
+                'communication': 'Communication',
+                'logistics': 'Logistics',
+                'counseling': 'Counseling',
+                'technical': 'Technical'
+            };
+            return skillTexts[skill] || skill;
+        }
+
+        function getRandomLocation() {
+            // Generate random locations within Bangladesh for demo
+            const locations = [
+                { lat: 23.8103 + (Math.random() - 0.5) * 0.5, lng: 90.4125 + (Math.random() - 0.5) * 0.5 },
+                { lat: 22.3569 + (Math.random() - 0.5) * 0.5, lng: 91.7832 + (Math.random() - 0.5) * 0.5 },
+                { lat: 24.8949 + (Math.random() - 0.5) * 0.5, lng: 91.8687 + (Math.random() - 0.5) * 0.5 },
+                { lat: 22.7010 + (Math.random() - 0.5) * 0.5, lng: 90.3535 + (Math.random() - 0.5) * 0.5 },
+                { lat: 22.8456 + (Math.random() - 0.5) * 0.5, lng: 89.5403 + (Math.random() - 0.5) * 0.5 }
+            ];
+            return locations[Math.floor(Math.random() * locations.length)];
+        }
+
+        function showNotification(message, type = 'info') {
+            const existingNotifications = document.querySelectorAll('.notification');
+            existingNotifications.forEach(notif => notif.remove());
+
+            const notification = document.createElement('div');
+            notification.className = `notification ${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span class="notification-message">${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+
+            document.body.appendChild(notification);
+
+            setTimeout(() => {
+                if (notification.parentElement) {
+                    notification.remove();
+                }
+            }, 5000);
+        }
+
+        // ===== REAL-TIME UPDATES SIMULATION =====
+        function startRealTimeUpdates() {
+            // Simulate real-time updates every 30 seconds
+            setInterval(() => {
+                // Randomly update some volunteer statuses and locations
+                volunteers.forEach(volunteer => {
+                    if (Math.random() > 0.7) { // 30% chance of update
+                        volunteer.lastActive = new Date();
+                        
+                        if (volunteer.status !== 'offline' && Math.random() > 0.8) {
+                            volunteer.location = getRandomLocation();
+                        }
+                        
+                        if (Math.random() > 0.9) { // 10% chance of status change
+                            const statuses = ['available', 'onduty', 'reserved'];
+                            volunteer.status = statuses[Math.floor(Math.random() * statuses.length)];
+                        }
+                    }
+                });
+                
+                updateVolunteerUI();
+                console.log('Real-time data updated');
+            }, 30000);
+        }
+
+        // ===== EXPORT FUNCTIONS =====
+        window.showAddVolunteerForm = showAddVolunteerForm;
+        window.closeAddVolunteerForm = closeAddVolunteerForm;
+        window.addNewVolunteer = addNewVolunteer;
+        window.filterVolunteers = filterVolunteers;
+        window.refreshMap = refreshMap;
+        window.showVolunteerDetails = showVolunteerDetails;
+        window.closeVolunteerDetails = closeVolunteerDetails;
+        window.editCurrentVolunteer = editCurrentVolunteer;
+        window.exportVolunteerReport = exportVolunteerReport;
+    </script>
+</body>
+</html>

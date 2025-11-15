@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emergency Response Analytics Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/date-fns@2.29.3/index.min.js"></script>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --success: #2ecc71;
+            --light: #ecf0f1;
+            --dark: #34495e;
+            --gray: #95a5a6;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        .dashboard-container {
+            display: grid;
+            grid-template-columns: 250px 1fr;
+            min-height: 100vh;
+        }
+        
+        /* Sidebar Styles */
+        .sidebar {
+            background: var(--primary);
+            color: white;
+            padding: 20px 0;
+            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+        }
+        
+        .logo {
+            padding: 0 20px 20px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            margin-bottom: 20px;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-menu {
+            list-style: none;
+        }
+        
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-item:hover, .nav-item.active {
+            background: rgba(255,255,255,0.1);
+            border-left: 4px solid var(--secondary);
+        }
+        
+        /* Main Content Styles */
+        .main-content {
+            padding: 20px;
+            overflow-y: auto;
+        }
+        
+        .dashboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .time-filter {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .filter-btn {
+            padding: 8px 15px;
+            border: 1px solid var(--gray);
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .filter-btn.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+        
+        .stats-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .stat-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .stat-card h3 {
+            font-size: 0.9rem;
+            color: var(--gray);
+            margin-bottom: 10px;
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .stat-trend {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 0.8rem;
+        }
+        
+        .trend-up {
+            color: var(--success);
+        }
+        
+        .trend-down {
+            color: var(--danger);
+        }
+        
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .chart-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .chart-title {
+            font-weight: 600;
+        }
+        
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .chart-actions select {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        
+        .data-table-container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        .table-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .table-actions {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-box {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            width: 250px;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+        
+        th {
+            font-weight: 600;
+            color: var(--dark);
+            background: #f9f9f9;
+        }
+        
+        .priority-high {
+            color: var(--danger);
+            font-weight: 600;
+        }
+        
+        .priority-medium {
+            color: var(--warning);
+            font-weight: 600;
+        }
+        
+        .priority-low {
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+        
+        .status-active {
+            background: rgba(46, 204, 113, 0.2);
+            color: var(--success);
+        }
+        
+        .status-pending {
+            background: rgba(243, 156, 18, 0.2);
+            color: var(--warning);
+        }
+        
+        .status-resolved {
+            background: rgba(52, 152, 219, 0.2);
+            color: var(--secondary);
+        }
+        
+        .filters-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .filter-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .filter-item label {
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: var(--dark);
+        }
+        
+        .filter-item select, .filter-item input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            min-width: 150px;
+        }
+        
+        .apply-filters {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+        
+        .apply-filters:hover {
+            background: #2980b9;
+        }
+        
+        .real-time-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--success);
+            font-weight: 600;
+        }
+        
+        .pulse {
+            width: 10px;
+            height: 10px;
+            background: var(--success);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
+            }
+            
+            70% {
+                transform: scale(1);
+                box-shadow: 0 0 0 10px rgba(46, 204, 113, 0);
+            }
+            
+            100% {
+                transform: scale(0.95);
+                box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
+            }
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo">
+                <h1>📊 Analytics Dashboard</h1>
+            </div>
+            <ul class="nav-menu">
+                <li class="nav-item active">
+                    <span>📈 Overview</span>
+                </li>
+                <li class="nav-item">
+                    <span>🚨 Emergency Requests</span>
+                </li>
+                <li class="nav-item">
+                    <span>🏥 Medical Analytics</span>
+                </li>
+                <li class="nav-item">
+                    <span>🚑 Response Teams</span>
+                </li>
+                <li class="nav-item">
+                    <span>📦 Resource Management</span>
+                </li>
+                <li class="nav-item">
+                    <span>🗺️ Geographic Analysis</span>
+                </li>
+                <li class="nav-item">
+                    <span>⚙️ Settings</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="dashboard-header">
+                <h2>Emergency Response Analytics</h2>
+                <div class="time-filter">
+                    <button class="filter-btn active">Today</button>
+                    <button class="filter-btn">Week</button>
+                    <button class="filter-btn">Month</button>
+                    <button class="filter-btn">Quarter</button>
+                    <button class="filter-btn">Custom Range</button>
+                </div>
+            </div>
+            
+            <!-- Filters Panel -->
+            <div class="filters-panel">
+                <h3>Data Filters</h3>
+                <div class="filter-group">
+                    <div class="filter-item">
+                        <label>Priority Level</label>
+                        <select id="priority-filter">
+                            <option value="all">All Priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Request Type</label>
+                        <select id="type-filter">
+                            <option value="all">All Types</option>
+                            <option value="medical">Medical</option>
+                            <option value="rescue">Rescue</option>
+                            <option value="supplies">Supplies</option>
+                            <option value="shelter">Shelter</option>
+                            <option value="equipment">Equipment</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Zone</label>
+                        <select id="zone-filter">
+                            <option value="all">All Zones</option>
+                            <option value="zone1">Zone 1 - High Priority</option>
+                            <option value="zone2">Zone 2 - Medium Priority</option>
+                            <option value="zone3">Zone 3 - Low Priority</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Status</label>
+                        <select id="status-filter">
+                            <option value="all">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="pending">Pending</option>
+                            <option value="resolved">Resolved</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Date Range</label>
+                        <input type="date" id="start-date">
+                    </div>
+                    <div class="filter-item">
+                        <label>to</label>
+                        <input type="date" id="end-date">
+                    </div>
+                </div>
+                <button class="apply-filters">Apply Filters</button>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-cards">
+                <div class="stat-card">
+                    <h3>Active Requests</h3>
+                    <div class="stat-value">142</div>
+                    <div class="stat-trend trend-up">
+                        <span>↑ 12% from yesterday</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Response Time (Avg)</h3>
+                    <div class="stat-value">18.4min</div>
+                    <div class="stat-trend trend-down">
+                        <span>↓ 5% from last week</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Resources Deployed</h3>
+                    <div class="stat-value">87%</div>
+                    <div class="stat-trend trend-up">
+                        <span>↑ 3% from yesterday</span>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <h3>Resolved Cases</h3>
+                    <div class="stat-value">324</div>
+                    <div class="stat-trend trend-up">
+                        <span>↑ 8% from yesterday</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Charts -->
+            <div class="charts-container">
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Emergency Requests Over Time</div>
+                        <div class="chart-actions">
+                            <select id="chart-type">
+                                <option value="line">Line Chart</option>
+                                <option value="bar">Bar Chart</option>
+                            </select>
+                            <div class="real-time-indicator">
+                                <div class="pulse"></div>
+                                <span>LIVE</span>
+                            </div>
+                        </div>
+                    </div>
+                    <canvas id="requestsChart" height="250"></canvas>
+                </div>
+                
+                <div class="chart-card">
+                    <div class="chart-header">
+                        <div class="chart-title">Request Distribution</div>
+                        <div class="chart-actions">
+                            <select id="distribution-type">
+                                <option value="type">By Type</option>
+                                <option value="priority">By Priority</option>
+                                <option value="zone">By Zone</option>
+                            </select>
+                        </div>
+                    </div>
+                    <canvas id="distributionChart" height="250"></canvas>
+                </div>
+            </div>
+            
+            <!-- Data Table -->
+            <div class="data-table-container">
+                <div class="table-header">
+                    <h3>Recent Emergency Requests</h3>
+                    <div class="table-actions">
+                        <input type="text" class="search-box" placeholder="Search requests...">
+                        <button class="filter-btn">Export Data</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Timestamp</th>
+                            <th>Type</th>
+                            <th>Priority</th>
+                            <th>Zone</th>
+                            <th>Status</th>
+                            <th>Response Time</th>
+                        </tr>
+                    </thead>
+                    <tbody id="requests-table-body">
+                        <!-- Data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sample data - In a real application, this would come from a database
+        const sampleRequests = [
+            { id: 'ER-1001', timestamp: '2023-11-05 08:30:15', type: 'Medical', priority: 'High', zone: 'Zone 1', status: 'Active', responseTime: '12min' },
+            { id: 'ER-1002', timestamp: '2023-11-05 09:15:42', type: 'Rescue', priority: 'High', zone: 'Zone 1', status: 'Pending', responseTime: '25min' },
+            { id: 'ER-1003', timestamp: '2023-11-05 10:05:33', type: 'Supplies', priority: 'Medium', zone: 'Zone 2', status: 'Resolved', responseTime: '18min' },
+            { id: 'ER-1004', timestamp: '2023-11-05 11:20:57', type: 'Shelter', priority: 'Low', zone: 'Zone 3', status: 'Active', responseTime: '30min' },
+            { id: 'ER-1005', timestamp: '2023-11-05 12:45:21', type: 'Equipment', priority: 'Medium', zone: 'Zone 2', status: 'Resolved', responseTime: '22min' },
+            { id: 'ER-1006', timestamp: '2023-11-05 13:30:44', type: 'Medical', priority: 'High', zone: 'Zone 1', status: 'Active', responseTime: '15min' },
+            { id: 'ER-1007', timestamp: '2023-11-05 14:10:18', type: 'Rescue', priority: 'Medium', zone: 'Zone 2', status: 'Pending', responseTime: '28min' },
+        ];
+        
+        // Initialize charts
+        document.addEventListener('DOMContentLoaded', function() {
+            // Populate table with sample data
+            populateTable(sampleRequests);
+            
+            // Initialize charts
+            initRequestsChart();
+            initDistributionChart();
+            
+            // Set up real-time updates simulation
+            setInterval(updateRealTimeData, 5000);
+            
+            // Set up filter handlers
+            document.querySelector('.apply-filters').addEventListener('click', applyFilters);
+        });
+        
+        function populateTable(requests) {
+            const tableBody = document.getElementById('requests-table-body');
+            tableBody.innerHTML = '';
+            
+            requests.forEach(request => {
+                const row = document.createElement('tr');
+                
+                // Determine priority class
+                let priorityClass = '';
+                if (request.priority === 'High') priorityClass = 'priority-high';
+                else if (request.priority === 'Medium') priorityClass = 'priority-medium';
+                else if (request.priority === 'Low') priorityClass = 'priority-low';
+                
+                // Determine status badge
+                let statusBadge = '';
+                if (request.status === 'Active') statusBadge = 'status-badge status-active';
+                else if (request.status === 'Pending') statusBadge = 'status-badge status-pending';
+                else if (request.status === 'Resolved') statusBadge = 'status-badge status-resolved';
+                
+                row.innerHTML = `
+                    <td>${request.id}</td>
+                    <td>${request.timestamp}</td>
+                    <td>${request.type}</td>
+                    <td class="${priorityClass}">${request.priority}</td>
+                    <td>${request.zone}</td>
+                    <td><span class="${statusBadge}">${request.status}</span></td>
+                    <td>${request.responseTime}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+        
+        function initRequestsChart() {
+            const ctx = document.getElementById('requestsChart').getContext('2d');
+            
+            // Sample data for the chart
+            const labels = ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:59'];
+            const data = {
+                labels: labels,
+                datasets: [
+                    {
+                        label: 'High Priority',
+                        data: [12, 8, 15, 22, 18, 14, 9],
+                        borderColor: '#e74c3c',
+                        backgroundColor: 'rgba(231, 76, 60, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Medium Priority',
+                        data: [18, 12, 20, 25, 22, 19, 15],
+                        borderColor: '#f39c12',
+                        backgroundColor: 'rgba(243, 156, 18, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    },
+                    {
+                        label: 'Low Priority',
+                        data: [25, 18, 22, 30, 28, 24, 20],
+                        borderColor: '#2ecc71',
+                        backgroundColor: 'rgba(46, 204, 113, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }
+                ]
+            };
+            
+            const config = {
+                type: 'line',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            title: {
+                                display: true,
+                                text: 'Number of Requests'
+                            }
+                        }
+                    }
+                },
+            };
+            
+            new Chart(ctx, config);
+        }
+        
+        function initDistributionChart() {
+            const ctx = document.getElementById('distributionChart').getContext('2d');
+            
+            const data = {
+                labels: ['Medical', 'Rescue', 'Supplies', 'Shelter', 'Equipment'],
+                datasets: [{
+                    label: 'Requests by Type',
+                    data: [35, 25, 20, 12, 8],
+                    backgroundColor: [
+                        'rgba(231, 76, 60, 0.7)',
+                        'rgba(243, 156, 18, 0.7)',
+                        'rgba(52, 152, 219, 0.7)',
+                        'rgba(155, 89, 182, 0.7)',
+                        'rgba(46, 204, 113, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgb(231, 76, 60)',
+                        'rgb(243, 156, 18)',
+                        'rgb(52, 152, 219)',
+                        'rgb(155, 89, 182)',
+                        'rgb(46, 204, 113)'
+                    ],
+                    borderWidth: 1
+                }]
+            };
+            
+            const config = {
+                type: 'doughnut',
+                data: data,
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                        }
+                    }
+                },
+            };
+            
+            new Chart(ctx, config);
+        }
+        
+        function applyFilters() {
+            // In a real application, this would make an API call with the filter parameters
+            const priorityFilter = document.getElementById('priority-filter').value;
+            const typeFilter = document.getElementById('type-filter').value;
+            const zoneFilter = document.getElementById('zone-filter').value;
+            const statusFilter = document.getElementById('status-filter').value;
+            
+            // Filter sample data based on selected filters
+            let filteredData = sampleRequests.filter(request => {
+                return (priorityFilter === 'all' || request.priority.toLowerCase() === priorityFilter) &&
+                       (typeFilter === 'all' || request.type.toLowerCase() === typeFilter) &&
+                       (zoneFilter === 'all' || request.zone.toLowerCase().includes(zoneFilter)) &&
+                       (statusFilter === 'all' || request.status.toLowerCase() === statusFilter);
+            });
+            
+            // Update table with filtered data
+            populateTable(filteredData);
+            
+            // In a real app, you would also update charts based on filters
+            console.log('Filters applied:', {
+                priority: priorityFilter,
+                type: typeFilter,
+                zone: zoneFilter,
+                status: statusFilter
+            });
+        }
+        
+        function updateRealTimeData() {
+            // Simulate real-time data updates
+            // In a real application, this would connect to a WebSocket or use Server-Sent Events
+            
+            // Update stats cards with random variations
+            const statCards = document.querySelectorAll('.stat-card .stat-value');
+            statCards.forEach(card => {
+                const currentValue = parseInt(card.textContent);
+                const variation = Math.floor(Math.random() * 5) - 2; // -2 to +2
+                const newValue = Math.max(0, currentValue + variation);
+                card.textContent = newValue;
+            });
+            
+            // Add a new random request to the table
+            const types = ['Medical', 'Rescue', 'Supplies', 'Shelter', 'Equipment'];
+            const priorities = ['High', 'Medium', 'Low'];
+            const zones = ['Zone 1', 'Zone 2', 'Zone 3'];
+            const statuses = ['Active', 'Pending'];
+            
+            const newRequest = {
+                id: 'ER-' + (1000 + Math.floor(Math.random() * 1000)),
+                timestamp: new Date().toISOString().replace('T', ' ').substring(0, 19),
+                type: types[Math.floor(Math.random() * types.length)],
+                priority: priorities[Math.floor(Math.random() * priorities.length)],
+                zone: zones[Math.floor(Math.random() * zones.length)],
+                status: statuses[Math.floor(Math.random() * statuses.length)],
+                responseTime: (10 + Math.floor(Math.random() * 20)) + 'min'
+            };
+            
+            // Add to the beginning of the table
+            const tableBody = document.getElementById('requests-table-body');
+            const newRow = document.createElement('tr');
+            
+            // Determine priority class
+            let priorityClass = '';
+            if (newRequest.priority === 'High') priorityClass = 'priority-high';
+            else if (newRequest.priority === 'Medium') priorityClass = 'priority-medium';
+            else if (newRequest.priority === 'Low') priorityClass = 'priority-low';
+            
+            // Determine status badge
+            let statusBadge = '';
+            if (newRequest.status === 'Active') statusBadge = 'status-badge status-active';
+            else if (newRequest.status === 'Pending') statusBadge = 'status-badge status-pending';
+            
+            newRow.innerHTML = `
+                <td>${newRequest.id}</td>
+                <td>${newRequest.timestamp}</td>
+                <td>${newRequest.type}</td>
+                <td class="${priorityClass}">${newRequest.priority}</td>
+                <td>${newRequest.zone}</td>
+                <td><span class="${statusBadge}">${newRequest.status}</span></td>
+                <td>${newRequest.responseTime}</td>
+            `;
+            
+            tableBody.insertBefore(newRow, tableBody.firstChild);
+            
+            // Remove the last row if we have too many
+            if (tableBody.children.length > 10) {
+                tableBody.removeChild(tableBody.lastChild);
+            }
+        }
+        
+    </script>
+</body>
+</html>

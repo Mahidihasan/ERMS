@@ -1,0 +1,895 @@
+/* ===== CSS Reset & Base Styles ===== */
+* { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+}
+
+html, body { 
+    height: 100%; 
+}
+
+body {
+    font-family: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: #1b1b1c;
+    color: #eee;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* ===== Header Styles ===== */
+.header {
+    height: 70px;
+    background: #e02b2b;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 28px;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.6);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header h1 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: .6px;
+    color: #fff;
+    margin-left: 4px;
+    font-family: "Baloo 2", "Inter", sans-serif;
+}
+
+.admin-menu-trigger {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    border: none;
+    padding: 10px 16px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.3s ease;
+}
+
+.admin-menu-trigger:hover {
+    background: rgba(255, 255, 255, 0.25);
+}
+
+/* ===== Admin Sidebar ===== */
+.admin-sidebar {
+    position: fixed;
+    top: 70px;
+    right: 0;
+    width: 280px;
+    height: calc(100vh - 70px);
+    background: #272727;
+    border-left: 2px solid rgba(0,0,0,0.45);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 99;
+    overflow-y: auto;
+    padding: 20px;
+}
+
+.admin-sidebar.active {
+    transform: translateX(0);
+}
+
+.admin-sidebar h3 {
+    color: #eee;
+    margin-bottom: 20px;
+    font-size: 18px;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    padding-bottom: 10px;
+}
+
+.admin-sidebar ul {
+    list-style: none;
+}
+
+.admin-sidebar li {
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.admin-sidebar li:hover {
+    background: #383838;
+}
+
+/* ===== Main Layout Grid ===== */
+.grid {
+    display: grid;
+    grid-template-columns: 300px 1fr 320px;
+    gap: 18px;
+    padding: 18px;
+    height: calc(100vh - 70px); /* fixed full height */
+    overflow: hidden; /* prevent main page scroll */
+}
+
+/* ===== Left Column Styles ===== */
+.col-left {
+    background: #272727;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 2px solid rgba(0,0,0,0.45);
+    height: 100%;
+    overflow: hidden; /* keeps full column locked */
+}
+
+.panel-title {
+    font-size: 14px;
+    color: #dcdcdc;
+    margin-bottom: 8px;
+    letter-spacing: .6px;
+    font-weight: 600;
+}
+
+.hotzones {
+    background: #303030;
+    border-radius: 8px;
+    padding: 6px;
+    flex: 1; /* use available vertical space dynamically */
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto; /* make hot zone list scrollable */
+}
+
+.hotzones div {
+    padding: 5px 6px;
+    border-radius: 4px;
+    background: #383838;
+    color: #ddd;
+    font-size: 13px;
+    transition: background 0.2s;
+}
+
+.hotzones div:hover {
+    background: #444;
+}
+
+.chat {
+    background: #303030;
+    border-radius: 6px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 6px;
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 5px;
+    font-size: 12px;
+    color: #bbb;
+}
+
+.fake-input {
+    background: #222;
+    height: 34px;
+    border-radius: 6px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    padding: 0 10px;
+    color: #888;
+    cursor: pointer;
+}
+
+/* ===== Main Column Styles ===== */
+.col-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 6px;
+}
+
+.stats {
+    display: flex;
+    gap: 18px;
+    align-items: stretch;
+}
+
+.stat {
+    background: linear-gradient(180deg, #2f2f2f, #242424);
+    flex: 1;
+    border-radius: 12px;
+    padding: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    box-shadow: 0 3px 0 rgba(0,0,0,0.6);
+    border: 1px solid rgba(255,255,255,0.02);
+    transition: transform 0.2s ease;
+}
+
+.stat:hover {
+    transform: translateY(-2px);
+}
+
+.stat h2 {
+    font-size: 34px;
+    margin-bottom: 6px;
+    color: #f6f6f6;
+}
+
+.stat p { 
+    color: #cfcfcf; 
+    font-size: 13px; 
+    letter-spacing: .6px; 
+}
+
+/* Sync / Request Feed Section */
+.sync {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid rgba(0,0,0,0.45);
+    max-height: calc(100vh - 230px); /* keeps it responsive but scrollable */
+    overflow-y: auto; /* allow scroll inside main area */
+}
+
+.sync-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.sync-header h3 { 
+    font-size: 16px; 
+    color: #eaeaea; 
+}
+
+.btn-filter {
+    background: #e06a51;
+    color: #fff;
+    border: none;
+    padding: 7px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    box-shadow: 0 2px 0 rgba(0,0,0,0.4);
+    transition: background 0.2s ease;
+}
+
+.btn-filter:hover {
+    background: #d4593f;
+}
+
+/* Request Feed: Scrollable Area */
+.request-feed {
+    background: transparent;
+    overflow-y: auto;
+    padding-right: 6px; /* Space for scrollbar */
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Single Request Card */
+.request-card {
+    background: linear-gradient(180deg, #262626, #1f1f1f);
+    border-radius: 10px;
+    padding: 12px;
+    position: relative;
+    border: 1px solid rgba(255,255,255,0.02);
+    box-shadow: 0 6px 0 rgba(0,0,0,0.45);
+    transition: transform 0.2s ease;
+}
+
+.request-card:hover {
+    transform: translateY(-2px);
+}
+
+.request-card h4 {
+    font-size: 15px;
+    color: #dcdcdc;
+    letter-spacing: .8px;
+    margin-bottom: 8px;
+}
+
+.request-card p {
+    color: #bdbdbd;
+    font-size: 13px;
+    line-height: 1.4;
+    margin-bottom: 10px;
+}
+
+.tags { 
+    display: flex; 
+    gap: 8px; 
+    flex-wrap: wrap; 
+}
+
+.tag {
+    padding: 5px 8px;
+    border-radius: 8px;
+    font-size: 12px;
+    color: #fff;
+    font-weight: 600;
+}
+
+/* Tag Color Variations */
+.tag.sylhet { background: #d96946; }
+.tag.preg { background: #8b4bff; }
+.tag.rescue { background: #2fb26a; }
+.tag.medical { background: #3a86ff; }
+.tag.dhaka { background: #ff9e00; }
+.tag.chattogram { background: #06d6a0; }
+
+.request-card .action-dot {
+    position: absolute;
+    right: 12px;
+    top: 10px;
+    background: #e86c52;
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    cursor: pointer;
+    border: 1px solid rgba(0,0,0,0.35);
+    transition: background 0.2s ease;
+}
+
+.request-card .action-dot:hover {
+    background: #ff7b5c;
+}
+
+/* ===== Right Column Styles ===== */
+.col-right {
+    background: #272727;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 2px solid rgba(0,0,0,0.45);
+    overflow: hidden; /* prevents column overflow */
+}
+
+.panel {
+    background: transparent;
+    padding: 8px 4px;
+}
+
+.panel p { 
+    color: #d0d0d0; 
+    font-size: 14px; 
+    margin-bottom: 6px; 
+}
+
+.supplies ul {
+    list-style: none;
+    margin-top: 2px;
+    padding-left: 8px;
+    color: #d0d0d0;
+}
+
+.supplies li { 
+    padding: 6px 0; 
+    font-weight: 600; 
+    transition: color 0.2s ease;
+}
+
+.supplies li:hover {
+    color: #4dabf7;
+}
+
+/* Scrollable zone inside right column */
+.right-scroll-area {
+    flex: 1; /* fills remaining space below Volunteers section */
+    overflow-y: auto; /* makes only this part scrollable */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 6px; /* space for scrollbar */
+}
+
+/* Keep scrollbar clean */
+.right-scroll-area::-webkit-scrollbar {
+    width: 8px;
+}
+.right-scroll-area::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.08);
+    border-radius: 6px;
+}
+
+/* ===== Scrollbar Styling (Modern Browsers) ===== */
+.request-feed::-webkit-scrollbar { 
+    width: 10px; 
+}
+
+.request-feed::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.08);
+    border-radius: 8px;
+    border: 2px solid rgba(0,0,0,0.3);
+}
+
+.request-feed::-webkit-scrollbar-track { 
+    background: transparent; 
+}
+
+.chat-messages::-webkit-scrollbar {
+    width: 6px;
+}
+
+.chat-messages::-webkit-scrollbar-thumb {
+    background: rgba(255,255,255,0.05);
+    border-radius: 3px;
+}
+
+/* ===== MAP & HEAT VISUALIZATION STYLES ===== */
+.heat-map-container {
+    position: relative;
+    height: 250px;
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #303030;
+}
+
+#bangladeshMap {
+    height: 100%;
+    width: 100%;
+    border-radius: 8px;
+}
+
+.heat-map-controls {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: rgba(39, 39, 39, 0.9);
+    padding: 8px;
+    border-radius: 6px;
+    z-index: 1000;
+    display: flex;
+    gap: 5px;
+}
+
+.btn-control {
+    background: #e06a51;
+    color: #fff;
+    border: none;
+    padding: 5px 8px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 11px;
+    font-weight: 600;
+    transition: background 0.2s ease;
+}
+
+.btn-control:hover {
+    background: #d4593f;
+}
+
+.heat-legend {
+    position: absolute;
+    bottom: 10px;
+    left: 10px;
+    background: rgba(39, 39, 39, 0.9);
+    padding: 8px;
+    border-radius: 6px;
+    z-index: 1000;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    margin: 3px 0;
+    font-size: 10px;
+}
+
+.legend-color {
+    width: 15px;
+    height: 8px;
+    margin-right: 6px;
+    border-radius: 2px;
+}
+
+.heat-intensity-low { background: #ffeb3b; }
+.heat-intensity-medium { background: #ff9800; }
+.heat-intensity-high { background: #f44336; }
+
+/* ===== MEDICINE INVENTORY STYLES ===== */
+.supplies li.open {
+  background: #383838;
+  padding-left: 12px;
+  border-radius: 6px;
+  margin-bottom: 8px;
+}
+
+.medicine-inventory {
+  background: #2a2a2a;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 8px;
+  border-left: 3px solid #3a86ff;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.medicine-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.medicine-header h4 {
+  color: #4dabf7;
+  font-size: 14px;
+  margin: 0;
+}
+
+.inventory-summary {
+  display: flex;
+  gap: 15px;
+  margin-bottom: 12px;
+  font-size: 12px;
+}
+
+.inventory-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11px;
+}
+
+.inventory-table th {
+  background: #333;
+  color: #ddd;
+  padding: 8px;
+  text-align: left;
+  font-weight: 600;
+  position: sticky;
+  top: 0;
+}
+
+.inventory-table td {
+  padding: 8px;
+  border-bottom: 1px solid #383838;
+  color: #ccc;
+}
+
+.quantity-low { color: #ff6b6b; font-weight: bold; }
+.quantity-medium { color: #ffa726; }
+.quantity-high { color: #4caf50; }
+
+.reason-critical { background: #d32f2f20; color: #ff6b6b; padding: 4px 8px; border-radius: 4px; }
+.reason-warning { background: #ff980020; color: #ffa726; padding: 4px 8px; border-radius: 4px; }
+.reason-adequate { background: #4caf5020; color: #4caf50; padding: 4px 8px; border-radius: 4px; }
+
+.status-critical { color: #ff6b6b; font-weight: bold; }
+.status-low { color: #ffa726; }
+.status-adequate { color: #4caf50; }
+
+.last-added {
+  font-size: 10px;
+  color: #888;
+}
+
+.add-medicine-btn {
+  background: #3a86ff;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.add-medicine-btn:hover {
+  background: #2a76ef;
+}
+
+.medicine-form {
+  background: #333;
+  padding: 12px;
+  border-radius: 6px;
+  margin-top: 10px;
+  border: 1px solid #444;
+}
+
+.form-group {
+  margin-bottom: 8px;
+}
+
+.form-group label {
+  display: block;
+  color: #ccc;
+  font-size: 12px;
+  margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  width: 100%;
+  padding: 6px;
+  border: 1px solid #444;
+  border-radius: 4px;
+  background: #2a2a2a;
+  color: #eee;
+  font-size: 12px;
+}
+
+.form-group textarea {
+  height: 60px;
+  resize: vertical;
+}
+
+.form-buttons {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.btn-secondary {
+  background: #555;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 11px;
+}
+
+.btn-small {
+  background: #3a86ff;
+  color: white;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 10px;
+  margin-right: 4px;
+}
+
+.btn-danger {
+  background: #e02b2b;
+}
+
+.btn-small:hover {
+  opacity: 0.8;
+}
+
+/* ===== Responsive Design (Smaller Screens) ===== */
+@media (max-width: 980px) {
+    .grid { 
+        grid-template-columns: 1fr; 
+        height: auto; 
+        padding-bottom: 60px; 
+    }
+    
+    .col-left, .col-right { 
+        order: 2; 
+    }
+    
+    .col-main { 
+        order: 1; 
+    }
+    
+    .sync { 
+        height: 600px; 
+    }
+    
+    .stats {
+        flex-wrap: wrap;
+    }
+    
+    .stat {
+        min-width: calc(50% - 9px);
+    }
+}
+
+@media (max-width: 600px) {
+    .stat {
+        min-width: 100%;
+    }
+    
+    .header h1 {
+        font-size: 22px;
+    }
+    
+    .grid {
+        padding: 10px;
+        gap: 12px;
+    }
+    
+    .admin-sidebar {
+        width: 100%;
+    }
+}
+/* Remove underlines and improve existing sidebar */
+.admin-sidebar a {
+    text-decoration: none !important;
+    color: #ccc !important;
+    transition: all 0.3s ease !important;
+}
+
+.admin-sidebar a:hover {
+    color: var(--secondary) !important;
+    background: rgba(77, 171, 247, 0.1) !important;
+}
+
+.admin-sidebar li {
+    padding: 10px 20px !important;
+    margin: 5px 0 !important;
+    border-radius: 6px !important;
+    transition: all 0.3s ease !important;
+}
+
+.admin-sidebar li:hover {
+    background: rgba(255, 255, 255, 0.05) !important;
+}
+/* ===== SCROLL LOCK FIXES ===== */
+
+/* Lock the main page from scrolling */
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
+
+/* Ensure the grid container doesn't create scroll */
+.grid {
+    display: grid;
+    grid-template-columns: 300px 1fr 320px;
+    gap: 18px;
+    padding: 18px;
+    height: calc(100vh - 70px);
+    overflow: hidden; /* This prevents main page scroll */
+}
+
+/* Make individual columns scrollable instead */
+.col-left {
+    background: #272727;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    border: 2px solid rgba(0,0,0,0.45);
+    height: 100%;
+    overflow: hidden;
+}
+
+.col-main {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding: 6px;
+    overflow: hidden; /* Prevent main column from scrolling */
+}
+
+.col-right {
+    background: #272727;
+    border-radius: 8px;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    border: 2px solid rgba(0,0,0,0.45);
+    overflow: hidden;
+}
+
+/* Make specific containers scrollable */
+.hotzones {
+    background: #303030;
+    border-radius: 8px;
+    padding: 6px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    overflow-y: auto; /* Only this container scrolls */
+}
+
+.sync {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    border: 1px solid rgba(0,0,0,0.45);
+    flex: 1; /* Take available space */
+    overflow-y: auto; /* Only this container scrolls */
+}
+
+.right-scroll-area {
+    flex: 1;
+    overflow-y: auto; /* Only this container scrolls */
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-right: 6px;
+}
+
+/* Fix for chat section */
+.chat {
+    background: #303030;
+    border-radius: 6px;
+    height: 200px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 6px;
+    overflow: hidden; /* Chat container doesn't scroll */
+}
+
+.chat-messages {
+    flex: 1;
+    overflow-y: auto; /* Only messages scroll */
+    padding: 5px;
+    font-size: 12px;
+    color: #bbb;
+}
+
+/* Enhanced scrollbar styling */
+::-webkit-scrollbar {
+    width: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.25);
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+
+/* Firefox scrollbar */
+* {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.15) rgba(255, 255, 255, 0.05);
+}
+
+/* Fix for responsive design */
+@media (max-width: 980px) {
+    .grid {
+        grid-template-columns: 1fr;
+        height: auto;
+        padding-bottom: 60px;
+        overflow: visible; /* Allow scrolling on mobile */
+    }
+    
+    html, body {
+        overflow: auto; /* Allow scrolling on mobile */
+        height: auto;
+    }
+    
+    .col-left, .col-right, .col-main {
+        overflow: visible;
+    }
+}
