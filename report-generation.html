@@ -1,6 +1,7 @@
 <!-- File: report-generation.html -->
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -55,7 +56,7 @@
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .report-stat h3 {
@@ -70,10 +71,21 @@
             margin: 0;
         }
 
-        .report-stat.requests h3 { color: #4dabf7; }
-        .report-stat.rescues h3 { color: #4caf50; }
-        .report-stat.volunteers h3 { color: #ff9800; }
-        .report-stat.resources h3 { color: #9c27b0; }
+        .report-stat.requests h3 {
+            color: #4dabf7;
+        }
+
+        .report-stat.rescues h3 {
+            color: #4caf50;
+        }
+
+        .report-stat.volunteers h3 {
+            color: #ff9800;
+        }
+
+        .report-stat.resources h3 {
+            color: #9c27b0;
+        }
 
         .report-controls {
             display: flex;
@@ -162,7 +174,7 @@
             background: #272727;
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
             margin-bottom: 20px;
             max-height: 600px;
             overflow-y: auto;
@@ -278,8 +290,13 @@
         }
 
         @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         /* Responsive design */
@@ -295,26 +312,27 @@
                 gap: 15px;
                 align-items: flex-start;
             }
-            
+
             .report-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .report-type-selector {
                 justify-content: center;
             }
-            
+
             .date-range-selector {
                 justify-content: center;
             }
-            
+
             .report-actions {
                 justify-content: center;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- HEADER -->
     <header class="header">
@@ -322,7 +340,7 @@
         <button class="admin-menu-trigger" id="adminMenuTrigger">
             <span>Admin</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
+                <path d="M9 18l6-6-6-6" />
             </svg>
         </button>
     </header>
@@ -377,12 +395,18 @@
 
         <div class="report-controls">
             <div class="report-type-selector">
-                <button class="report-type-btn active" data-type="summary" onclick="selectReportType('summary')">📊 Summary Report</button>
-                <button class="report-type-btn" data-type="requests" onclick="selectReportType('requests')">🚨 Emergency Requests</button>
-                <button class="report-type-btn" data-type="resources" onclick="selectReportType('resources')">📦 Resource Utilization</button>
-                <button class="report-type-btn" data-type="volunteers" onclick="selectReportType('volunteers')">👥 Volunteer Activity</button>
-                <button class="report-type-btn" data-type="financial" onclick="selectReportType('financial')">💰 Financial Report</button>
-                <button class="report-type-btn" data-type="custom" onclick="selectReportType('custom')">⚙️ Custom Report</button>
+                <button class="report-type-btn active" data-type="summary" onclick="selectReportType('summary')">📊
+                    Summary Report</button>
+                <button class="report-type-btn" data-type="requests" onclick="selectReportType('requests')">🚨 Emergency
+                    Requests</button>
+                <button class="report-type-btn" data-type="resources" onclick="selectReportType('resources')">📦
+                    Resource Utilization</button>
+                <button class="report-type-btn" data-type="volunteers" onclick="selectReportType('volunteers')">👥
+                    Volunteer Activity</button>
+                <button class="report-type-btn" data-type="financial" onclick="selectReportType('financial')">💰
+                    Financial Report</button>
+                <button class="report-type-btn" data-type="custom" onclick="selectReportType('custom')">⚙️ Custom
+                    Report</button>
             </div>
             <div class="date-range-selector">
                 <input type="date" id="startDate">
@@ -408,7 +432,7 @@
                         <span>Period: <span id="reportPeriod">Loading...</span></span>
                     </div>
                 </div>
-                
+
                 <div class="report-section">
                     <h2>Executive Summary</h2>
                     <p>Select a report type and date range to generate a detailed report.</p>
@@ -421,34 +445,38 @@
     <script src="report-generation.js"></script>
     <script>
         // Admin sidebar toggle
-        document.getElementById('adminMenuTrigger').addEventListener('click', function() {
+        document.getElementById('adminMenuTrigger').addEventListener('click', function () {
             document.getElementById('adminSidebar').classList.toggle('active');
         });
 
         // Close sidebar when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const sidebar = document.getElementById('adminSidebar');
             const trigger = document.getElementById('adminMenuTrigger');
-            
-            if (sidebar.classList.contains('active') && 
-                !sidebar.contains(event.target) && 
+
+            if (sidebar.classList.contains('active') &&
+                !sidebar.contains(event.target) &&
                 !trigger.contains(event.target)) {
                 sidebar.classList.remove('active');
             }
         });
 
         // Set default date range (last 30 days)
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const endDate = new Date();
             const startDate = new Date();
             startDate.setDate(startDate.getDate() - 30);
-            
+
             document.getElementById('startDate').value = startDate.toISOString().split('T')[0];
             document.getElementById('endDate').value = endDate.toISOString().split('T')[0];
-            
+
             // Load initial data
             loadReportData();
         });
     </script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firestore-service.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/realtime-service.js"></script>
 </body>
 </html>

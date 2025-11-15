@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,51 +17,51 @@
             --dark: #34495e;
             --gray: #95a5a6;
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        
+
         body {
             background-color: #f5f7fa;
             color: #333;
             line-height: 1.6;
         }
-        
+
         .dashboard-container {
             display: grid;
             grid-template-columns: 250px 1fr;
             min-height: 100vh;
         }
-        
+
         /* Sidebar Styles */
         .sidebar {
             background: var(--primary);
             color: white;
             padding: 20px 0;
-            box-shadow: 2px 0 5px rgba(0,0,0,0.1);
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
         }
-        
+
         .logo {
             padding: 0 20px 20px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             margin-bottom: 20px;
         }
-        
+
         .logo h1 {
             font-size: 1.5rem;
             display: flex;
             align-items: center;
             gap: 10px;
         }
-        
+
         .nav-menu {
             list-style: none;
         }
-        
+
         .nav-item {
             padding: 12px 20px;
             cursor: pointer;
@@ -69,30 +70,31 @@
             align-items: center;
             gap: 10px;
         }
-        
-        .nav-item:hover, .nav-item.active {
-            background: rgba(255,255,255,0.1);
+
+        .nav-item:hover,
+        .nav-item.active {
+            background: rgba(255, 255, 255, 0.1);
             border-left: 4px solid var(--secondary);
         }
-        
+
         /* Main Content Styles */
         .main-content {
             padding: 20px;
             overflow-y: auto;
         }
-        
+
         .dashboard-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-        
+
         .header-actions {
             display: flex;
             gap: 15px;
         }
-        
+
         .btn {
             padding: 10px 20px;
             border: none;
@@ -104,124 +106,125 @@
             gap: 8px;
             transition: all 0.3s;
         }
-        
+
         .btn-primary {
             background: var(--secondary);
             color: white;
         }
-        
+
         .btn-primary:hover {
             background: #2980b9;
         }
-        
+
         .btn-success {
             background: var(--success);
             color: white;
         }
-        
+
         .btn-success:hover {
             background: #27ae60;
         }
-        
+
         .btn-warning {
             background: var(--warning);
             color: white;
         }
-        
+
         .btn-warning:hover {
             background: #e67e22;
         }
-        
+
         .stats-cards {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
             gap: 20px;
             margin-bottom: 20px;
         }
-        
+
         .stat-card {
             background: white;
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             display: flex;
             flex-direction: column;
             border-left: 4px solid var(--secondary);
         }
-        
+
         .stat-card.priority-high {
             border-left-color: var(--danger);
         }
-        
+
         .stat-card.priority-medium {
             border-left-color: var(--warning);
         }
-        
+
         .stat-card.priority-low {
             border-left-color: var(--success);
         }
-        
+
         .stat-card h3 {
             font-size: 0.9rem;
             color: var(--gray);
             margin-bottom: 10px;
         }
-        
+
         .stat-value {
             font-size: 2rem;
             font-weight: bold;
             margin-bottom: 10px;
         }
-        
+
         .stat-trend {
             display: flex;
             align-items: center;
             gap: 5px;
             font-size: 0.8rem;
         }
-        
+
         .trend-up {
             color: var(--danger);
         }
-        
+
         .trend-down {
             color: var(--success);
         }
-        
+
         .filters-panel {
             background: white;
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             margin-bottom: 20px;
         }
-        
+
         .filter-group {
             display: flex;
             flex-wrap: wrap;
             gap: 15px;
             margin-bottom: 15px;
         }
-        
+
         .filter-item {
             display: flex;
             flex-direction: column;
             gap: 5px;
         }
-        
+
         .filter-item label {
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--dark);
         }
-        
-        .filter-item select, .filter-item input {
+
+        .filter-item select,
+        .filter-item input {
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             min-width: 150px;
         }
-        
+
         .apply-filters {
             background: var(--secondary);
             color: white;
@@ -232,49 +235,50 @@
             font-weight: 600;
             transition: all 0.3s;
         }
-        
+
         .apply-filters:hover {
             background: #2980b9;
         }
-        
+
         .requests-container {
             display: grid;
             grid-template-columns: 1fr 350px;
             gap: 20px;
         }
-        
+
         .requests-list {
             background: white;
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
         }
-        
+
         .requests-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-bottom: 20px;
         }
-        
+
         .search-box {
             padding: 8px 12px;
             border: 1px solid #ddd;
             border-radius: 4px;
             width: 250px;
         }
-        
+
         .requests-table {
             width: 100%;
             border-collapse: collapse;
         }
-        
-        th, td {
+
+        th,
+        td {
             padding: 12px 15px;
             text-align: left;
             border-bottom: 1px solid #eee;
         }
-        
+
         th {
             font-weight: 600;
             color: var(--dark);
@@ -282,61 +286,61 @@
             cursor: pointer;
             user-select: none;
         }
-        
+
         th:hover {
             background: #f0f0f0;
         }
-        
+
         .request-row {
             transition: all 0.3s;
             cursor: pointer;
         }
-        
+
         .request-row:hover {
             background: #f8f9fa;
         }
-        
+
         .request-row.selected {
             background: #e3f2fd;
         }
-        
+
         .priority-high {
             color: var(--danger);
             font-weight: 600;
         }
-        
+
         .priority-medium {
             color: var(--warning);
             font-weight: 600;
         }
-        
+
         .priority-low {
             color: var(--success);
             font-weight: 600;
         }
-        
+
         .status-badge {
             padding: 4px 8px;
             border-radius: 4px;
             font-size: 0.8rem;
             font-weight: 600;
         }
-        
+
         .status-pending {
             background: rgba(243, 156, 18, 0.2);
             color: var(--warning);
         }
-        
+
         .status-in-progress {
             background: rgba(52, 152, 219, 0.2);
             color: var(--secondary);
         }
-        
+
         .status-awaiting {
             background: rgba(149, 165, 166, 0.2);
             color: var(--gray);
         }
-        
+
         .action-btn {
             padding: 5px 10px;
             border: none;
@@ -346,63 +350,63 @@
             margin-right: 5px;
             transition: all 0.3s;
         }
-        
+
         .btn-assign {
             background: var(--secondary);
             color: white;
         }
-        
+
         .btn-approve {
             background: var(--success);
             color: white;
         }
-        
+
         .btn-reject {
             background: var(--danger);
             color: white;
         }
-        
+
         .btn-hold {
             background: var(--warning);
             color: white;
         }
-        
+
         .request-details {
             background: white;
             border-radius: 8px;
             padding: 20px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             height: fit-content;
         }
-        
+
         .details-header {
             margin-bottom: 20px;
             padding-bottom: 15px;
             border-bottom: 1px solid #eee;
         }
-        
+
         .detail-item {
             margin-bottom: 15px;
         }
-        
+
         .detail-label {
             font-size: 0.8rem;
             font-weight: 600;
             color: var(--gray);
             margin-bottom: 5px;
         }
-        
+
         .detail-value {
             font-weight: 500;
         }
-        
+
         .user-info {
             display: flex;
             align-items: center;
             gap: 10px;
             margin-top: 10px;
         }
-        
+
         .user-avatar {
             width: 40px;
             height: 40px;
@@ -414,33 +418,33 @@
             color: white;
             font-weight: bold;
         }
-        
+
         .user-details h4 {
             margin-bottom: 2px;
         }
-        
+
         .user-details p {
             font-size: 0.8rem;
             color: var(--gray);
         }
-        
+
         .detail-actions {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
             margin-top: 20px;
         }
-        
+
         .timeline {
             margin-top: 20px;
         }
-        
+
         .timeline-item {
             display: flex;
             margin-bottom: 15px;
             position: relative;
         }
-        
+
         .timeline-marker {
             width: 12px;
             height: 12px;
@@ -450,34 +454,34 @@
             margin-top: 5px;
             flex-shrink: 0;
         }
-        
+
         .timeline-content {
             flex: 1;
         }
-        
+
         .timeline-time {
             font-size: 0.8rem;
             color: var(--gray);
             margin-bottom: 5px;
         }
-        
+
         .pagination {
             display: flex;
             justify-content: space-between;
             align-items: center;
             margin-top: 20px;
         }
-        
+
         .pagination-info {
             font-size: 0.9rem;
             color: var(--gray);
         }
-        
+
         .pagination-controls {
             display: flex;
             gap: 10px;
         }
-        
+
         .page-btn {
             padding: 8px 12px;
             border: 1px solid #ddd;
@@ -485,25 +489,25 @@
             border-radius: 4px;
             cursor: pointer;
         }
-        
+
         .page-btn.active {
             background: var(--secondary);
             color: white;
             border-color: var(--secondary);
         }
-        
+
         .empty-state {
             text-align: center;
             padding: 40px 20px;
             color: var(--gray);
         }
-        
+
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 15px;
             color: #ddd;
         }
-        
+
         .real-time-indicator {
             display: flex;
             align-items: center;
@@ -512,7 +516,7 @@
             font-weight: 600;
             font-size: 0.9rem;
         }
-        
+
         .pulse {
             width: 8px;
             height: 8px;
@@ -520,42 +524,43 @@
             border-radius: 50%;
             animation: pulse 2s infinite;
         }
-        
+
         @keyframes pulse {
             0% {
                 transform: scale(0.95);
                 box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7);
             }
-            
+
             70% {
                 transform: scale(1);
                 box-shadow: 0 0 0 5px rgba(46, 204, 113, 0);
             }
-            
+
             100% {
                 transform: scale(0.95);
                 box-shadow: 0 0 0 0 rgba(46, 204, 113, 0);
             }
         }
-        
+
         .badge {
             padding: 2px 8px;
             border-radius: 10px;
             font-size: 0.7rem;
             font-weight: 600;
         }
-        
+
         .badge-new {
             background: var(--danger);
             color: white;
         }
-        
+
         .badge-urgent {
             background: var(--warning);
             color: white;
         }
     </style>
 </head>
+
 <body>
     <div class="dashboard-container">
         <!-- Sidebar -->
@@ -587,7 +592,7 @@
                 </li>
             </ul>
         </div>
-        
+
         <!-- Main Content -->
         <div class="main-content">
             <div class="dashboard-header">
@@ -605,7 +610,7 @@
                     </button>
                 </div>
             </div>
-            
+
             <!-- Stats Cards -->
             <div class="stats-cards">
                 <div class="stat-card priority-high">
@@ -637,7 +642,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- Filters Panel -->
             <div class="filters-panel">
                 <h3>Filter Requests</h3>
@@ -687,7 +692,7 @@
                 </div>
                 <button class="apply-filters">Apply Filters</button>
             </div>
-            
+
             <!-- Requests Container -->
             <div class="requests-container">
                 <!-- Requests List -->
@@ -696,7 +701,7 @@
                         <h3>Pending Requests (57)</h3>
                         <input type="text" class="search-box" placeholder="Search requests...">
                     </div>
-                    
+
                     <table class="requests-table">
                         <thead>
                             <tr>
@@ -713,7 +718,7 @@
                             <!-- Requests will be populated by JavaScript -->
                         </tbody>
                     </table>
-                    
+
                     <div class="pagination">
                         <div class="pagination-info">Showing 1-10 of 57 requests</div>
                         <div class="pagination-controls">
@@ -724,14 +729,14 @@
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Request Details -->
                 <div class="request-details">
                     <div class="details-header">
                         <h3>Request Details</h3>
                         <p>Select a request to view details</p>
                     </div>
-                    
+
                     <div id="request-details-content">
                         <div class="empty-state">
                             <i class="fas fa-clipboard-list"></i>
@@ -747,12 +752,12 @@
     <script>
         // Sample data - In a real application, this would come from a database
         const pendingRequests = [
-            { 
-                id: 'ER-1042', 
-                timestamp: '2023-11-05 14:25:33', 
-                type: 'Medical Assistance', 
-                priority: 'High', 
-                zone: 'Zone 1', 
+            {
+                id: 'ER-1042',
+                timestamp: '2023-11-05 14:25:33',
+                type: 'Medical Assistance',
+                priority: 'High',
+                zone: 'Zone 1',
                 status: 'Pending Review',
                 description: 'Elderly patient needs immediate medical attention for respiratory issues. Requires oxygen support.',
                 location: 'Sylnet District, Block 4A',
@@ -765,12 +770,12 @@
                 ],
                 tags: ['medical', 'elderly', 'respiratory']
             },
-            { 
-                id: 'ER-1041', 
-                timestamp: '2023-11-05 13:45:12', 
-                type: 'Emergency Supplies', 
-                priority: 'High', 
-                zone: 'Zone 1', 
+            {
+                id: 'ER-1041',
+                timestamp: '2023-11-05 13:45:12',
+                type: 'Emergency Supplies',
+                priority: 'High',
+                zone: 'Zone 1',
                 status: 'In Progress',
                 description: 'Family of 4 stranded without food and water. Need immediate delivery of essential supplies.',
                 location: 'Northgate Apartments, Unit 5B',
@@ -783,12 +788,12 @@
                 ],
                 tags: ['food', 'water', 'family']
             },
-            { 
-                id: 'ER-1040', 
-                timestamp: '2023-11-05 12:30:45', 
-                type: 'Rescue Operation', 
-                priority: 'Medium', 
-                zone: 'Zone 2', 
+            {
+                id: 'ER-1040',
+                timestamp: '2023-11-05 12:30:45',
+                type: 'Rescue Operation',
+                priority: 'Medium',
+                zone: 'Zone 2',
                 status: 'Awaiting Resources',
                 description: 'Vehicle trapped in flood waters. Occupants need evacuation.',
                 location: 'Riverbend Road, near bridge',
@@ -801,12 +806,12 @@
                 ],
                 tags: ['rescue', 'flood', 'vehicle']
             },
-            { 
-                id: 'ER-1039', 
-                timestamp: '2023-11-05 11:15:22', 
-                type: 'Temporary Shelter', 
-                priority: 'Medium', 
-                zone: 'Zone 2', 
+            {
+                id: 'ER-1039',
+                timestamp: '2023-11-05 11:15:22',
+                type: 'Temporary Shelter',
+                priority: 'Medium',
+                zone: 'Zone 2',
                 status: 'Pending Review',
                 description: 'Family displaced due to structural damage in their home. Need temporary accommodation.',
                 location: '12 Oak Street',
@@ -818,12 +823,12 @@
                 ],
                 tags: ['shelter', 'displaced', 'family']
             },
-            { 
-                id: 'ER-1038', 
-                timestamp: '2023-11-05 10:05:18', 
-                type: 'Equipment Request', 
-                priority: 'Low', 
-                zone: 'Zone 3', 
+            {
+                id: 'ER-1038',
+                timestamp: '2023-11-05 10:05:18',
+                type: 'Equipment Request',
+                priority: 'Low',
+                zone: 'Zone 3',
                 status: 'Pending Review',
                 description: 'Need additional generators for community center emergency operations.',
                 location: 'Community Center, Main Street',
@@ -836,23 +841,23 @@
                 tags: ['equipment', 'generator', 'community']
             }
         ];
-        
+
         // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Populate table with sample data
             populateRequestsTable(pendingRequests);
-            
+
             // Set up filter handlers
             document.querySelector('.apply-filters').addEventListener('click', applyFilters);
-            
+
             // Set up real-time updates simulation
             setInterval(updateRealTimeData, 10000);
         });
-        
+
         function populateRequestsTable(requests) {
             const tableBody = document.getElementById('requests-table-body');
             tableBody.innerHTML = '';
-            
+
             if (requests.length === 0) {
                 tableBody.innerHTML = `
                     <tr>
@@ -865,28 +870,28 @@
                 `;
                 return;
             }
-            
+
             requests.forEach(request => {
                 const row = document.createElement('tr');
                 row.className = 'request-row';
                 row.setAttribute('data-request-id', request.id);
-                
+
                 // Determine priority class
                 let priorityClass = '';
                 if (request.priority === 'High') priorityClass = 'priority-high';
                 else if (request.priority === 'Medium') priorityClass = 'priority-medium';
                 else if (request.priority === 'Low') priorityClass = 'priority-low';
-                
+
                 // Determine status badge
                 let statusBadge = '';
                 if (request.status === 'Pending Review') statusBadge = 'status-badge status-pending';
                 else if (request.status === 'In Progress') statusBadge = 'status-badge status-in-progress';
                 else if (request.status === 'Awaiting Resources') statusBadge = 'status-badge status-awaiting';
-                
+
                 // Format timestamp
                 const time = new Date('2023-11-05 ' + request.timestamp.split(' ')[1]);
                 const formattedTime = time.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                
+
                 row.innerHTML = `
                     <td>
                         <div>${request.id}</div>
@@ -909,36 +914,36 @@
                         </button>
                     </td>
                 `;
-                
+
                 // Add click event to show details
-                row.addEventListener('click', function() {
+                row.addEventListener('click', function () {
                     document.querySelectorAll('.request-row').forEach(r => r.classList.remove('selected'));
                     this.classList.add('selected');
                     showRequestDetails(request);
                 });
-                
+
                 tableBody.appendChild(row);
             });
         }
-        
+
         function showRequestDetails(request) {
             const detailsContent = document.getElementById('request-details-content');
-            
+
             // Determine priority class
             let priorityClass = '';
             if (request.priority === 'High') priorityClass = 'priority-high';
             else if (request.priority === 'Medium') priorityClass = 'priority-medium';
             else if (request.priority === 'Low') priorityClass = 'priority-low';
-            
+
             // Determine status badge
             let statusBadge = '';
             if (request.status === 'Pending Review') statusBadge = 'status-badge status-pending';
             else if (request.status === 'In Progress') statusBadge = 'status-badge status-in-progress';
             else if (request.status === 'Awaiting Resources') statusBadge = 'status-badge status-awaiting';
-            
+
             // Format tags
             const tagsHtml = request.tags.map(tag => `<span class="badge" style="background: #e0e0e0; color: #666; margin-right: 5px;">${tag}</span>`).join('');
-            
+
             // Format timeline
             const timelineHtml = request.timeline.map(item => `
                 <div class="timeline-item">
@@ -950,7 +955,7 @@
                     </div>
                 </div>
             `).join('');
-            
+
             detailsContent.innerHTML = `
                 <div class="detail-item">
                     <div class="detail-label">Request ID</div>
@@ -1029,25 +1034,25 @@
                 </div>
             `;
         }
-        
+
         function applyFilters() {
             // In a real application, this would make an API call with the filter parameters
             const priorityFilter = document.getElementById('priority-filter').value;
             const typeFilter = document.getElementById('type-filter').value;
             const zoneFilter = document.getElementById('zone-filter').value;
             const statusFilter = document.getElementById('status-filter').value;
-            
+
             // Filter sample data based on selected filters
             let filteredData = pendingRequests.filter(request => {
                 return (priorityFilter === 'all' || request.priority.toLowerCase() === priorityFilter) &&
-                       (typeFilter === 'all' || request.type.toLowerCase().includes(typeFilter)) &&
-                       (zoneFilter === 'all' || request.zone.toLowerCase().includes(zoneFilter)) &&
-                       (statusFilter === 'all' || request.status.toLowerCase().replace(' ', '-') === statusFilter);
+                    (typeFilter === 'all' || request.type.toLowerCase().includes(typeFilter)) &&
+                    (zoneFilter === 'all' || request.zone.toLowerCase().includes(zoneFilter)) &&
+                    (statusFilter === 'all' || request.status.toLowerCase().replace(' ', '-') === statusFilter);
             });
-            
+
             // Update table with filtered data
             populateRequestsTable(filteredData);
-            
+
             // Clear selection
             document.getElementById('request-details-content').innerHTML = `
                 <div class="empty-state">
@@ -1057,7 +1062,7 @@
                 </div>
             `;
         }
-        
+
         function updateRealTimeData() {
             // Simulate new request coming in
             if (Math.random() > 0.7) { // 30% chance of new request
@@ -1065,12 +1070,12 @@
                 const priorities = ['High', 'Medium', 'Low'];
                 const zones = ['Zone 1', 'Zone 2', 'Zone 3'];
                 const statuses = ['Pending Review'];
-                
+
                 const now = new Date();
-                const timeString = now.getHours().toString().padStart(2, '0') + ':' + 
-                                 now.getMinutes().toString().padStart(2, '0') + ':' + 
-                                 now.getSeconds().toString().padStart(2, '0');
-                
+                const timeString = now.getHours().toString().padStart(2, '0') + ':' +
+                    now.getMinutes().toString().padStart(2, '0') + ':' +
+                    now.getSeconds().toString().padStart(2, '0');
+
                 const newRequest = {
                     id: 'ER-' + (1042 + Math.floor(Math.random() * 100)),
                     timestamp: '2023-11-05 ' + timeString,
@@ -1088,16 +1093,16 @@
                     ],
                     tags: ['new', 'auto-generated']
                 };
-                
+
                 // Add to the beginning of the table
                 pendingRequests.unshift(newRequest);
                 populateRequestsTable(pendingRequests);
-                
+
                 // Show notification
                 showNotification(`New ${newRequest.priority} priority request: ${newRequest.id}`);
             }
         }
-        
+
         function showNotification(message) {
             // Create notification element
             const notification = document.createElement('div');
@@ -1113,16 +1118,16 @@
                 z-index: 1000;
                 animation: slideIn 0.3s ease-out;
             `;
-            
+
             notification.innerHTML = `
                 <div style="display: flex; align-items: center; gap: 10px;">
                     <i class="fas fa-bell"></i>
                     <span>${message}</span>
                 </div>
             `;
-            
+
             document.body.appendChild(notification);
-            
+
             // Remove after 5 seconds
             setTimeout(() => {
                 notification.style.animation = 'slideOut 0.3s ease-in';
@@ -1131,34 +1136,34 @@
                 }, 300);
             }, 5000);
         }
-        
+
         // Action functions
         function assignRequest(requestId) {
             alert(`Assigning request ${requestId} to a response team...`);
             // In real app, this would open a modal to select a team
         }
-        
+
         function approveRequest(requestId) {
             if (confirm(`Approve request ${requestId}? This will allocate resources and notify the requester.`)) {
                 // In real app, this would update the request status in the database
                 showNotification(`Request ${requestId} approved successfully`);
             }
         }
-        
+
         function holdRequest(requestId) {
             if (confirm(`Put request ${requestId} on hold? This will pause any action on this request.`)) {
                 // In real app, this would update the request status in the database
                 showNotification(`Request ${requestId} put on hold`);
             }
         }
-        
+
         function rejectRequest(requestId) {
             if (confirm(`Reject request ${requestId}? This action cannot be undone.`)) {
                 // In real app, this would update the request status in the database
                 showNotification(`Request ${requestId} rejected`);
             }
         }
-        
+
         // Add CSS for notifications
         const style = document.createElement('style');
         style.textContent = `
@@ -1174,5 +1179,10 @@
         `;
         document.head.appendChild(style);
     </script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firestore-service.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/realtime-service.js"></script>
 </body>
+
 </html>

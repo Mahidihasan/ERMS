@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +55,7 @@
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .inventory-stat h3 {
@@ -69,10 +70,21 @@
             margin: 0;
         }
 
-        .inventory-stat.critical h3 { color: #ff6b6b; }
-        .inventory-stat.low h3 { color: #ffa726; }
-        .inventory-stat.adequate h3 { color: #4caf50; }
-        .inventory-stat.expiring h3 { color: #ff9800; }
+        .inventory-stat.critical h3 {
+            color: #ff6b6b;
+        }
+
+        .inventory-stat.low h3 {
+            color: #ffa726;
+        }
+
+        .inventory-stat.adequate h3 {
+            color: #4caf50;
+        }
+
+        .inventory-stat.expiring h3 {
+            color: #ff9800;
+        }
 
         .inventory-controls {
             display: flex;
@@ -125,7 +137,7 @@
             background: #272727;
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .food-table {
@@ -228,11 +240,30 @@
             font-weight: 600;
         }
 
-        .category-food { background: #4caf50; color: white; }
-        .category-water { background: #4dabf7; color: white; }
-        .category-beverages { background: #9c27b0; color: white; }
-        .category-nutrition { background: #ff9800; color: black; }
-        .category-other { background: #607d8b; color: white; }
+        .category-food {
+            background: #4caf50;
+            color: white;
+        }
+
+        .category-water {
+            background: #4dabf7;
+            color: white;
+        }
+
+        .category-beverages {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .category-nutrition {
+            background: #ff9800;
+            color: black;
+        }
+
+        .category-other {
+            background: #607d8b;
+            color: white;
+        }
 
         .stock-info {
             display: flex;
@@ -476,28 +507,28 @@
                 gap: 15px;
                 align-items: flex-start;
             }
-            
+
             .inventory-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .search-box {
                 max-width: none;
             }
-            
+
             .filter-controls {
                 justify-content: space-between;
             }
-            
+
             .food-table {
                 font-size: 12px;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
             }
-            
+
             .inventory-table-container {
                 overflow-x: auto;
             }
@@ -506,41 +537,44 @@
                 min-width: 800px;
             }
         }
+
         .inventory-table-container {
-    background: #272727;
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
-    max-height: 500px; /* Adjust this value as needed */
-    overflow-y: auto;
-}
+            background: #272727;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 500px;
+            /* Adjust this value as needed */
+            overflow-y: auto;
+        }
 
-.food-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    background: #2a2a2a;
-}
+        .food-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background: #2a2a2a;
+        }
 
-/* Fixed header that stays visible while scrolling */
-.food-table thead th {
-    position: sticky;
-    top: 0;
-    background: #333;
-    z-index: 10;
-    box-shadow: 0 2px 2px -1px rgba(0,0,0,0.4);
-}
+        /* Fixed header that stays visible while scrolling */
+        .food-table thead th {
+            position: sticky;
+            top: 0;
+            background: #333;
+            z-index: 10;
+            box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.4);
+        }
 
-.food-table th {
-    background: #333;
-    color: #ddd;
-    padding: 15px 12px;
-    text-align: left;
-    font-weight: 600;
-    border-bottom: 2px solid #444;
-}
+        .food-table th {
+            background: #333;
+            color: #ddd;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #444;
+        }
     </style>
 </head>
+
 <body>
     <!-- HEADER -->
     <header class="header">
@@ -548,7 +582,7 @@
         <button class="admin-menu-trigger" id="adminMenuTrigger">
             <span>Admin</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
+                <path d="M9 18l6-6-6-6" />
             </svg>
         </button>
     </header>
@@ -610,7 +644,8 @@
 
         <div class="inventory-controls">
             <div class="search-box">
-                <input type="text" id="foodSearch" placeholder="Search food & water items..." onkeyup="filterFoodItems()">
+                <input type="text" id="foodSearch" placeholder="Search food & water items..."
+                    onkeyup="filterFoodItems()">
                 <span>🔍</span>
             </div>
             <div class="filter-controls">
@@ -664,7 +699,7 @@
                             <label for="itemName">Item Name *</label>
                             <input type="text" id="itemName" required placeholder="e.g., Rice, Water Bottles, etc.">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="itemCategory">Category *</label>
                             <select id="itemCategory" required>
@@ -676,7 +711,7 @@
                                 <option value="other">Other</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="currentStock">Current Stock *</label>
@@ -707,7 +742,7 @@
                                 <input type="date" id="expiryDate" required>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="storageLocation">Storage Location</label>
                             <input type="text" id="storageLocation" placeholder="e.g., Warehouse A, Shelf 3">
@@ -736,26 +771,31 @@
     <script src="food-inventory.js"></script>
     <script>
         // Admin sidebar toggle
-        document.getElementById('adminMenuTrigger').addEventListener('click', function() {
+        document.getElementById('adminMenuTrigger').addEventListener('click', function () {
             document.getElementById('adminSidebar').classList.toggle('active');
         });
 
         // Close sidebar when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const sidebar = document.getElementById('adminSidebar');
             const trigger = document.getElementById('adminMenuTrigger');
-            
-            if (sidebar.classList.contains('active') && 
-                !sidebar.contains(event.target) && 
+
+            if (sidebar.classList.contains('active') &&
+                !sidebar.contains(event.target) &&
                 !trigger.contains(event.target)) {
                 sidebar.classList.remove('active');
             }
         });
 
         // Load food data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadFoodInventory();
         });
     </script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firestore-service.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/realtime-service.js"></script>
 </body>
+
 </html>

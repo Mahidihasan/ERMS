@@ -2,6 +2,7 @@
 // ===== Emergency Response Admin Panel - Real-Time Ready =====
 
 // ===== AUTHENTICATION CHECK =====
+
 document.addEventListener('DOMContentLoaded', function() {
     // Check authentication
     const user = getCurrentUser();
@@ -782,6 +783,139 @@ function adminLogout() {
         window.location.href = 'login.html?logout=true';
     }
 }
+// Add to admin.js - Firebase integration for admin panel
+
+// Initialize Firebase data when admin panel loads
+async function initializeFirebaseAdmin() {
+    try {
+        // Setup real-time listeners
+        setupAdminRealTimeListeners();
+        
+        // Load initial data
+        await loadAdminInitialData();
+        
+        console.log('Firebase admin initialized');
+    } catch (error) {
+        console.error('Firebase admin initialization failed:', error);
+    }
+}
+
+// Setup real-time listeners for admin panel
+function setupAdminRealTimeListeners() {
+    // Real-time requests listener
+    firestoreService.setupRequestsListener((requests) => {
+        appState.requests = requests;
+        updateRequestFeed();
+        updateHeatMapData();
+        updateStatistics();
+    });
+
+    // Real-time volunteers listener
+    firestoreService.setupVolunteersListener((volunteers) => {
+        updateVolunteerStatistics(volunteers);
+    });
+
+    // Real-time statistics listener
+    firestoreService.setupStatisticsListener((stats) => {
+        appState.statistics = stats;
+        updateStatistics();
+    });
+}
+
+// Load initial data for admin panel
+async function loadAdminInitialData() {
+    try {
+        const [requests, volunteers, stats] = await Promise.all([
+            firestoreService.getAllRequests(),
+            firestoreService.getAvailableVolunteers(),
+            firestoreService.getSystemStatistics()
+        ]);
+
+        appState.requests = requests;
+        updateVolunteerStatistics(volunteers);
+        appState.statistics = stats;
+        
+        updateUI();
+    } catch (error) {
+        console.error('Error loading initial admin data:', error);
+        showNotification('Failed to load initial data', 'error');
+    }
+}
+
+// Update volunteer statistics
+function updateVolunteerStatistics(volunteers) {
+    const active = volunteers.length;
+    const free = volunteers.filter(v => v.status === 'available').length;
+    
+    appState.volunteers = {
+        active: active,
+        free: free,
+        reserve: Math.max(0, active - free)
+    };
+    
+    updateStatistics();
+}
+
+// Update assignVolunteer function with Firebase
+async function assignVolunteer(requestId) {
+    try {
+        const availableVolunteers = await firestoreService.getAvailableVolunteers();
+        
+        if (availableVolunteers.length === 0) {
+            showNotification('No available volunteers at the moment', 'warning');
+            return;
+        }
+
+        // For now, assign to first available volunteer
+        const volunteer = availableVolunteers[0];
+        
+        await firestoreService.updateRequestStatus(requestId, 'assigned', volunteer.id);
+        await firestoreService.updateVolunteerStatus(volunteer.id, 'assigned');
+        
+        showNotification(`Request assigned to ${volunteer.name}`, 'success');
+        
+    } catch (error) {
+        console.error('Error assigning volunteer:', error);
+        showNotification('Failed to assign volunteer', 'error');
+    }
+}
+
+// Update resolveRequest function with Firebase
+async function resolveRequest(requestId) {
+    try {
+        await firestoreService.updateRequestStatus(requestId, 'resolved');
+        
+        // Update statistics
+        const stats = await firestoreService.getSystemStatistics();
+        await firestoreService.updateStatistics({
+            resolvedRequests: (stats.resolvedRequests || 0) + 1,
+            pendingRequests: Math.max(0, (stats.pendingRequests || 1) - 1)
+        });
+        
+        showNotification('Request marked as resolved', 'success');
+        
+    } catch (error) {
+        console.error('Error resolving request:', error);
+        showNotification('Failed to resolve request', 'error');
+    }
+}
+
+// Update your existing DOMContentLoaded event listener in admin.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Check authentication
+    const user = getCurrentUser();
+    
+    // Redirect if not logged in or not an admin role
+    if (!user || (user.role !== 'super_admin' && user.role !== 'admin' && user.role !== 'director')) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    currentAdmin = user;
+    initializeSystemAdmin();
+    initializeFirebaseAdmin(); // Add this line
+});
+
 
 
 // ===== EXPORT FUNCTIONS =====

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +55,7 @@
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .inventory-stat h3 {
@@ -69,10 +70,21 @@
             margin: 0;
         }
 
-        .inventory-stat.available h3 { color: #4caf50; }
-        .inventory-stat.occupied h3 { color: #ff9800; }
-        .inventory-stat.maintenance h3 { color: #ff6b6b; }
-        .inventory-stat.reserved h3 { color: #4dabf7; }
+        .inventory-stat.available h3 {
+            color: #4caf50;
+        }
+
+        .inventory-stat.occupied h3 {
+            color: #ff9800;
+        }
+
+        .inventory-stat.maintenance h3 {
+            color: #ff6b6b;
+        }
+
+        .inventory-stat.reserved h3 {
+            color: #4dabf7;
+        }
 
         .inventory-controls {
             display: flex;
@@ -125,7 +137,7 @@
             background: #272727;
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .shelter-table {
@@ -256,11 +268,30 @@
             font-weight: 600;
         }
 
-        .category-tent { background: #4caf50; color: white; }
-        .category-container { background: #ff9800; color: black; }
-        .category-building { background: #9c27b0; color: white; }
-        .category-community { background: #4dabf7; color: white; }
-        .category-other { background: #607d8b; color: white; }
+        .category-tent {
+            background: #4caf50;
+            color: white;
+        }
+
+        .category-container {
+            background: #ff9800;
+            color: black;
+        }
+
+        .category-building {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .category-community {
+            background: #4dabf7;
+            color: white;
+        }
+
+        .category-other {
+            background: #607d8b;
+            color: white;
+        }
 
         .capacity-info {
             display: flex;
@@ -492,28 +523,28 @@
                 gap: 15px;
                 align-items: flex-start;
             }
-            
+
             .inventory-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .search-box {
                 max-width: none;
             }
-            
+
             .filter-controls {
                 justify-content: space-between;
             }
-            
+
             .shelter-table {
                 font-size: 12px;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
             }
-            
+
             .inventory-table-container {
                 overflow-x: auto;
             }
@@ -524,6 +555,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- HEADER -->
     <header class="header">
@@ -531,7 +563,7 @@
         <button class="admin-menu-trigger" id="adminMenuTrigger">
             <span>Admin</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
+                <path d="M9 18l6-6-6-6" />
             </svg>
         </button>
     </header>
@@ -636,9 +668,10 @@
                     <form id="shelterForm" class="compact-form" onsubmit="addNewShelter(event)">
                         <div class="form-group">
                             <label for="shelterName">Shelter Name *</label>
-                            <input type="text" id="shelterName" required placeholder="e.g., Central Camp A, Tent City 1">
+                            <input type="text" id="shelterName" required
+                                placeholder="e.g., Central Camp A, Tent City 1">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="shelterCategory">Category *</label>
                             <select id="shelterCategory" required>
@@ -650,7 +683,7 @@
                                 <option value="other">Other</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="capacity">Total Capacity *</label>
@@ -677,7 +710,7 @@
                                 <input type="date" id="setupDate" required>
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="location">Location *</label>
                             <input type="text" id="location" required placeholder="e.g., Central Park, Zone 2">
@@ -706,26 +739,31 @@
     <script src="shelter-inventory.js"></script>
     <script>
         // Admin sidebar toggle
-        document.getElementById('adminMenuTrigger').addEventListener('click', function() {
+        document.getElementById('adminMenuTrigger').addEventListener('click', function () {
             document.getElementById('adminSidebar').classList.toggle('active');
         });
 
         // Close sidebar when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const sidebar = document.getElementById('adminSidebar');
             const trigger = document.getElementById('adminMenuTrigger');
-            
-            if (sidebar.classList.contains('active') && 
-                !sidebar.contains(event.target) && 
+
+            if (sidebar.classList.contains('active') &&
+                !sidebar.contains(event.target) &&
                 !trigger.contains(event.target)) {
                 sidebar.classList.remove('active');
             }
         });
 
         // Load shelter data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadShelterInventory();
         });
     </script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firestore-service.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/realtime-service.js"></script>
 </body>
+
 </html>

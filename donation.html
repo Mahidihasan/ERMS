@@ -1,19 +1,21 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Donation Management - Emergency Response</title>
     <style>
         /* ===== CSS Reset & Base Styles ===== */
-        * { 
-            box-sizing: border-box; 
-            margin: 0; 
-            padding: 0; 
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
-        html, body { 
-            height: 100%; 
+        html,
+        body {
+            height: 100%;
         }
 
         body {
@@ -32,7 +34,7 @@
             align-items: center;
             justify-content: space-between;
             padding: 0 28px;
-            box-shadow: 0 2px 0 rgba(0,0,0,0.6);
+            box-shadow: 0 2px 0 rgba(0, 0, 0, 0.6);
             position: sticky;
             top: 0;
             z-index: 100;
@@ -73,7 +75,7 @@
             width: 280px;
             height: calc(100vh - 70px);
             background: #272727;
-            border-left: 2px solid rgba(0,0,0,0.45);
+            border-left: 2px solid rgba(0, 0, 0, 0.45);
             transform: translateX(100%);
             transition: transform 0.3s ease;
             z-index: 99;
@@ -89,7 +91,7 @@
             color: #eee;
             margin-bottom: 20px;
             font-size: 18px;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
             padding-bottom: 10px;
         }
 
@@ -165,7 +167,7 @@
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .inventory-stat h3 {
@@ -180,10 +182,21 @@
             margin: 0;
         }
 
-        .inventory-stat.total h3 { color: #4dabf7; }
-        .inventory-stat.pending h3 { color: #ff9800; }
-        .inventory-stat.verified h3 { color: #4caf50; }
-        .inventory-stat.disbursed h3 { color: #9c27b0; }
+        .inventory-stat.total h3 {
+            color: #4dabf7;
+        }
+
+        .inventory-stat.pending h3 {
+            color: #ff9800;
+        }
+
+        .inventory-stat.verified h3 {
+            color: #4caf50;
+        }
+
+        .inventory-stat.disbursed h3 {
+            color: #9c27b0;
+        }
 
         .inventory-controls {
             display: flex;
@@ -269,7 +282,7 @@
             background: #272727;
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .donation-table {
@@ -411,11 +424,30 @@
             font-weight: 600;
         }
 
-        .type-cash { background: #4caf50; color: white; }
-        .type-food { background: #ff9800; color: black; }
-        .type-medical { background: #f44336; color: white; }
-        .type-equipment { background: #2196f3; color: white; }
-        .type-other { background: #607d8b; color: white; }
+        .type-cash {
+            background: #4caf50;
+            color: white;
+        }
+
+        .type-food {
+            background: #ff9800;
+            color: black;
+        }
+
+        .type-medical {
+            background: #f44336;
+            color: white;
+        }
+
+        .type-equipment {
+            background: #2196f3;
+            color: white;
+        }
+
+        .type-other {
+            background: #607d8b;
+            color: white;
+        }
 
         .priority-indicator {
             padding: 4px 8px;
@@ -424,9 +456,20 @@
             font-weight: 600;
         }
 
-        .priority-high { background: #f44336; color: white; }
-        .priority-medium { background: #ff9800; color: black; }
-        .priority-low { background: #4caf50; color: white; }
+        .priority-high {
+            background: #f44336;
+            color: white;
+        }
+
+        .priority-medium {
+            background: #ff9800;
+            color: black;
+        }
+
+        .priority-low {
+            background: #4caf50;
+            color: white;
+        }
 
         .table-action-buttons {
             display: flex;
@@ -608,18 +651,29 @@
             color: white;
             padding: 12px;
             border-radius: 6px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             z-index: 10000;
             max-width: 300px;
         }
-        .notification.success { border-left: 4px solid #2fb26a; }
-        .notification.error { border-left: 4px solid #e02b2b; }
-        .notification.info { border-left: 4px solid #3a86ff; }
+
+        .notification.success {
+            border-left: 4px solid #2fb26a;
+        }
+
+        .notification.error {
+            border-left: 4px solid #e02b2b;
+        }
+
+        .notification.info {
+            border-left: 4px solid #3a86ff;
+        }
+
         .notification-content {
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
+
         .notification-close {
             background: none;
             border: none;
@@ -641,28 +695,28 @@
                 gap: 15px;
                 align-items: flex-start;
             }
-            
+
             .inventory-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .search-box {
                 max-width: none;
             }
-            
+
             .filter-controls {
                 justify-content: space-between;
             }
-            
+
             .donation-table {
                 font-size: 12px;
             }
-            
+
             .table-action-buttons {
                 flex-direction: column;
             }
-            
+
             .inventory-table-container {
                 overflow-x: auto;
             }
@@ -673,6 +727,7 @@
         }
     </style>
 </head>
+
 <body>
     <!-- HEADER -->
     <header class="header">
@@ -680,7 +735,7 @@
         <button class="admin-menu-trigger" id="adminMenuTrigger">
             <span>Admin</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
+                <path d="M9 18l6-6-6-6" />
             </svg>
         </button>
     </header>
@@ -735,7 +790,8 @@
 
         <div class="inventory-controls">
             <div class="search-box">
-                <input type="text" id="donationSearch" placeholder="Search donations, donors..." onkeyup="filterDonations()">
+                <input type="text" id="donationSearch" placeholder="Search donations, donors..."
+                    onkeyup="filterDonations()">
                 <span>🔍</span>
             </div>
             <div class="filter-controls">
@@ -829,7 +885,8 @@
                                 </div>
                                 <div class="form-group">
                                     <label for="donationAmount">Amount/Quantity *</label>
-                                    <input type="text" id="donationAmount" required placeholder="e.g., 5000 BDT, 50 kg Rice">
+                                    <input type="text" id="donationAmount" required
+                                        placeholder="e.g., 5000 BDT, 50 kg Rice">
                                 </div>
                             </div>
                             <div class="form-row">
@@ -848,7 +905,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="donationDescription">Description</label>
-                                <textarea id="donationDescription" placeholder="Detailed description of items, condition, etc."></textarea>
+                                <textarea id="donationDescription"
+                                    placeholder="Detailed description of items, condition, etc."></textarea>
                             </div>
                         </div>
 
@@ -907,21 +965,21 @@
         let filteredDonations = [];
 
         // ===== INITIALIZATION =====
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             console.log('Donation Management System Initialized');
-            
+
             // Admin sidebar toggle
-            document.getElementById('adminMenuTrigger').addEventListener('click', function() {
+            document.getElementById('adminMenuTrigger').addEventListener('click', function () {
                 document.getElementById('adminSidebar').classList.toggle('active');
             });
 
             // Close sidebar when clicking outside
-            document.addEventListener('click', function(event) {
+            document.addEventListener('click', function (event) {
                 const sidebar = document.getElementById('adminSidebar');
                 const trigger = document.getElementById('adminMenuTrigger');
-                
-                if (sidebar.classList.contains('active') && 
-                    !sidebar.contains(event.target) && 
+
+                if (sidebar.classList.contains('active') &&
+                    !sidebar.contains(event.target) &&
                     !trigger.contains(event.target)) {
                     sidebar.classList.remove('active');
                 }
@@ -929,7 +987,7 @@
 
             // Load donation data when page loads
             loadDonationInventory();
-            
+
             // Set default date to today
             const today = new Date().toISOString().split('T')[0];
             document.getElementById('receivedDate').value = today;
@@ -1030,7 +1088,7 @@
                     lastUpdated: new Date('2024-01-17')
                 }
             ];
-            
+
             updateDonationUI();
         }
 
@@ -1060,8 +1118,8 @@
 
             filteredDonations = donationInventory.filter(donation => {
                 const matchesSearch = donation.donorName.toLowerCase().includes(searchTerm) ||
-                                    donation.donationAmount.toLowerCase().includes(searchTerm) ||
-                                    (donation.description && donation.description.toLowerCase().includes(searchTerm));
+                    donation.donationAmount.toLowerCase().includes(searchTerm) ||
+                    (donation.description && donation.description.toLowerCase().includes(searchTerm));
                 const matchesStatus = statusFilter === 'all' || donation.status === statusFilter;
                 const matchesType = typeFilter === 'all' || donation.donationType === typeFilter;
                 const matchesPriority = priorityFilter === 'all' || donation.priority === priorityFilter;
@@ -1096,7 +1154,7 @@
         function createDonationRow(donation) {
             const row = document.createElement('tr');
             row.className = `donation-row status-${donation.status}`;
-            
+
             const receivedDate = new Date(donation.receivedDate).toLocaleDateString();
 
             row.innerHTML = `
@@ -1159,7 +1217,7 @@
 
         function addNewDonation(event) {
             event.preventDefault();
-            
+
             const formData = {
                 id: generateId(),
                 donorName: document.getElementById('donorName').value,
@@ -1361,5 +1419,10 @@
         window.editDonation = editDonation;
         window.exportDonations = exportDonations;
     </script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firestore-service.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/realtime-service.js"></script>
 </body>
+
 </html>

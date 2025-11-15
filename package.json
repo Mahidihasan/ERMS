@@ -1,0 +1,29 @@
+{
+  "name": "emergency-backend",
+  "version": "1.0.0",
+  "description": "Backend for Emergency Alert System with Firebase and real-time Socket.io",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "emergency",
+    "firebase",
+    "socket.io",
+    "real-time",
+    "express"
+  ],
+  "author": "Your Name",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.2",
+    "cors": "^2.8.5",
+    "express": "^4.18.2",
+    "firebase-admin": "^12.3.0",
+    "socket.io": "^4.7.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}

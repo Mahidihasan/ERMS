@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -54,7 +55,7 @@
             padding: 20px;
             border-radius: 12px;
             text-align: center;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .inventory-stat h3 {
@@ -69,10 +70,21 @@
             margin: 0;
         }
 
-        .inventory-stat.available h3 { color: #4caf50; }
-        .inventory-stat.in-use h3 { color: #ff9800; }
-        .inventory-stat.maintenance h3 { color: #ff6b6b; }
-        .inventory-stat.reserved h3 { color: #4dabf7; }
+        .inventory-stat.available h3 {
+            color: #4caf50;
+        }
+
+        .inventory-stat.in-use h3 {
+            color: #ff9800;
+        }
+
+        .inventory-stat.maintenance h3 {
+            color: #ff6b6b;
+        }
+
+        .inventory-stat.reserved h3 {
+            color: #4dabf7;
+        }
 
         .inventory-controls {
             display: flex;
@@ -125,7 +137,7 @@
             background: #272727;
             border-radius: 12px;
             padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
         .equipment-table {
@@ -256,12 +268,35 @@
             font-weight: 600;
         }
 
-        .category-rescue { background: #ff6b6b; color: white; }
-        .category-medical { background: #4dabf7; color: white; }
-        .category-communication { background: #9c27b0; color: white; }
-        .category-power { background: #ff9800; color: black; }
-        .category-safety { background: #4caf50; color: white; }
-        .category-other { background: #607d8b; color: white; }
+        .category-rescue {
+            background: #ff6b6b;
+            color: white;
+        }
+
+        .category-medical {
+            background: #4dabf7;
+            color: white;
+        }
+
+        .category-communication {
+            background: #9c27b0;
+            color: white;
+        }
+
+        .category-power {
+            background: #ff9800;
+            color: black;
+        }
+
+        .category-safety {
+            background: #4caf50;
+            color: white;
+        }
+
+        .category-other {
+            background: #607d8b;
+            color: white;
+        }
 
         .stock-info {
             display: flex;
@@ -297,10 +332,25 @@
             font-weight: 600;
         }
 
-        .condition-excellent { background: #4caf50; color: white; }
-        .condition-good { background: #8bc34a; color: white; }
-        .condition-fair { background: #ff9800; color: black; }
-        .condition-poor { background: #ff6b6b; color: white; }
+        .condition-excellent {
+            background: #4caf50;
+            color: white;
+        }
+
+        .condition-good {
+            background: #8bc34a;
+            color: white;
+        }
+
+        .condition-fair {
+            background: #ff9800;
+            color: black;
+        }
+
+        .condition-poor {
+            background: #ff6b6b;
+            color: white;
+        }
 
         .location-info {
             font-size: 12px;
@@ -505,28 +555,28 @@
                 gap: 15px;
                 align-items: flex-start;
             }
-            
+
             .inventory-controls {
                 flex-direction: column;
                 align-items: stretch;
             }
-            
+
             .search-box {
                 max-width: none;
             }
-            
+
             .filter-controls {
                 justify-content: space-between;
             }
-            
+
             .equipment-table {
                 font-size: 12px;
             }
-            
+
             .action-buttons {
                 flex-direction: column;
             }
-            
+
             .inventory-table-container {
                 overflow-x: auto;
             }
@@ -535,42 +585,45 @@
                 min-width: 800px;
             }
         }
+
         .inventory-table-container {
-    background: #272727;
-    border-radius: 12px;
-    padding: 20px;
-    border: 1px solid rgba(255,255,255,0.05);
-    max-height: 500px; /* Adjust this value as needed */
-    overflow-y: auto;
-}
+            background: #272727;
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            max-height: 500px;
+            /* Adjust this value as needed */
+            overflow-y: auto;
+        }
 
-.equipment-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 14px;
-    background: #2a2a2a;
-}
+        .equipment-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            background: #2a2a2a;
+        }
 
-/* Optional: Add a fixed header */
-.equipment-table thead {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-}
+        /* Optional: Add a fixed header */
+        .equipment-table thead {
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
 
-.equipment-table th {
-    background: #333;
-    color: #ddd;
-    padding: 15px 12px;
-    text-align: left;
-    font-weight: 600;
-    border-bottom: 2px solid #444;
-    position: sticky;
-    top: 0;
-    z-index: 11;
-}
+        .equipment-table th {
+            background: #333;
+            color: #ddd;
+            padding: 15px 12px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #444;
+            position: sticky;
+            top: 0;
+            z-index: 11;
+        }
     </style>
 </head>
+
 <body>
     <!-- HEADER -->
     <header class="header">
@@ -578,7 +631,7 @@
         <button class="admin-menu-trigger" id="adminMenuTrigger">
             <span>Admin</span>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M9 18l6-6-6-6"/>
+                <path d="M9 18l6-6-6-6" />
             </svg>
         </button>
     </header>
@@ -685,9 +738,10 @@
                     <form id="equipmentForm" class="compact-form" onsubmit="addNewEquipment(event)">
                         <div class="form-group">
                             <label for="equipmentName">Equipment Name *</label>
-                            <input type="text" id="equipmentName" required placeholder="e.g., Rescue Boat, Generator, Radio Set">
+                            <input type="text" id="equipmentName" required
+                                placeholder="e.g., Rescue Boat, Generator, Radio Set">
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="equipmentCategory">Category *</label>
                             <select id="equipmentCategory" required>
@@ -700,7 +754,7 @@
                                 <option value="other">Other</option>
                             </select>
                         </div>
-                        
+
                         <div class="form-row">
                             <div class="form-group">
                                 <label for="currentStock">Current Stock *</label>
@@ -743,7 +797,7 @@
                                 <input type="date" id="nextTest">
                             </div>
                         </div>
-                        
+
                         <div class="form-group">
                             <label for="storageLocation">Storage Location *</label>
                             <input type="text" id="storageLocation" required placeholder="e.g., Warehouse A, Shelf 3">
@@ -751,7 +805,8 @@
 
                         <div class="form-group">
                             <label for="equipmentNotes">Equipment Notes</label>
-                            <textarea id="equipmentNotes" placeholder="Specifications, maintenance requirements, etc."></textarea>
+                            <textarea id="equipmentNotes"
+                                placeholder="Specifications, maintenance requirements, etc."></textarea>
                         </div>
                     </form>
                 </div>
@@ -767,26 +822,31 @@
     <script src="equipment-inventory.js"></script>
     <script>
         // Admin sidebar toggle
-        document.getElementById('adminMenuTrigger').addEventListener('click', function() {
+        document.getElementById('adminMenuTrigger').addEventListener('click', function () {
             document.getElementById('adminSidebar').classList.toggle('active');
         });
 
         // Close sidebar when clicking outside
-        document.addEventListener('click', function(event) {
+        document.addEventListener('click', function (event) {
             const sidebar = document.getElementById('adminSidebar');
             const trigger = document.getElementById('adminMenuTrigger');
-            
-            if (sidebar.classList.contains('active') && 
-                !sidebar.contains(event.target) && 
+
+            if (sidebar.classList.contains('active') &&
+                !sidebar.contains(event.target) &&
                 !trigger.contains(event.target)) {
                 sidebar.classList.remove('active');
             }
         });
 
         // Load equipment data when page loads
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             loadEquipmentInventory();
         });
     </script>
+    <script src="js/firebase-config.js"></script>
+    <script src="js/firestore-service.js"></script>
+    <script src="js/api-service.js"></script>
+    <script src="js/realtime-service.js"></script>
 </body>
+
 </html>
